@@ -1,4 +1,38 @@
+# everware.nl — all crawlers welcome, including AI/LLM crawlers.
+# Machine-readable site summary for LLMs: https://everware.nl/llms.txt
+
 User-agent: *
+Allow: /
+
+# Explicit welcome for AI crawlers (same policy as *)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: meta-externalagent
 Allow: /
 
 Sitemap: https://everware.nl/sitemap.xml
