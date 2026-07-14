@@ -61,10 +61,10 @@
       capTags: ['Persoonlijke aandacht', 'Stabiliteit', 'Onderhoudbaarheid', 'Betrouwbaarheid'],
       capRows: [
         { label: 'Backend', lines: ['Python · PHP · Node', 'Java or Kotlin · Go · C++ · Rust'] },
-        { label: 'Frontend', lines: ['React or Next · Vue or Nuxt', 'PWA · Web Components · WASM'] },
+        { label: 'Frontend', lines: ['React or Next · Vue or Nuxt', 'PWA · Web Components · WASM', 'React Native or Expo · iOS · Android'] },
         { label: 'AI & ML', lines: ["LLM's · RAG · Generative AI", 'fine-tuning · eigen modellen'] },
         { label: 'Agents', lines: ['workflows · tool-use · orchestratie'] },
-        { label: 'Cloud & infra', lines: ['GCP · AWS · Vultr · Fly.io · Railway · CI/CD'] },
+        { label: 'Cloud & infra', lines: ['Railway · Fly.io · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD'] },
         { label: 'Data', lines: ['pipelines · integraties · dashboards', 'MySQL · PostgreSQL · Supabase'] }
       ],
       svEyebrow: '02 / Diensten',
@@ -182,10 +182,10 @@
       capTags: ['Personal attention', 'Stability', 'Maintainability', 'Reliability'],
       capRows: [
         { label: 'Backend', lines: ['Python · PHP · Node', 'Java or Kotlin · Go · C++ · Rust'] },
-        { label: 'Frontend', lines: ['React or Next · Vue or Nuxt', 'PWA · Web Components · WASM'] },
+        { label: 'Frontend', lines: ['React or Next · Vue or Nuxt', 'PWA · Web Components · WASM', 'React Native or Expo · iOS · Android'] },
         { label: 'AI & ML', lines: ["LLM's · RAG · Generative AI", 'fine-tuning · custom models'] },
         { label: 'Agents', lines: ['workflows · tool-use · orchestration'] },
-        { label: 'Cloud & infra', lines: ['GCP · AWS · Vultr · Fly.io · Railway · CI/CD'] },
+        { label: 'Cloud & infra', lines: ['Railway · Fly.io · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD'] },
         { label: 'Data', lines: ['pipelines · integrations · dashboards', 'MySQL · PostgreSQL · Supabase'] }
       ],
       svEyebrow: '02 / Services',
@@ -549,13 +549,13 @@
   });
 
   // ---- init ----
-  nlBtn.addEventListener('click', () => applyLang('nl'));
-  enBtn.addEventListener('click', () => applyLang('en'));
   document.addEventListener('scroll', updateHeader, true);
   window.addEventListener('resize', updateHeader, { passive: true });
 
-  const urlLang = new URLSearchParams(location.search).get('lang');
-  applyLang(urlLang === 'en' || urlLang === 'nl' ? urlLang : CONFIG.defaultLang);
+  // Language is fixed per page: / is Dutch, /en/ is English (static, crawlable).
+  // The NL/EN toggle navigates between them; applyLang only re-affirms the
+  // current page's strings and drives the language-dependent JS (typing words).
+  applyLang(document.documentElement.lang === 'en' ? 'en' : CONFIG.defaultLang);
   startGlows();
   startWeb();
 })();
