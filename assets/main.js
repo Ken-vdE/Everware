@@ -20,6 +20,8 @@
       ],
       words: ['AI', 'Software', 'Agents', 'Automatisering', 'Advies', 'Processen', 'Oplossingen', 'Architectuur', 'Data'],
       title: 'Everware — Maatwerk software, AI & autonome agents',
+      metaDesc: 'Everware — Nederlands maatwerk-softwarebureau. Software, AI-oplossingen en autonome agents op maat, met persoonlijke aandacht.',
+      ogDesc: 'Van eerste gesprek tot autonome agents. Wij bouwen op maat — met persoonlijke aandacht, stabiliteit en onderhoudbaarheid.',
       heroEyebrow: '~/everware — Software op maat',
       heroTitleWord: 'Maatwerk',
       heroDesc: 'Van eerste gesprek tot autonome agents. Wij bouwen op maat — met persoonlijke aandacht.',
@@ -35,7 +37,7 @@
       ],
       status: ['Persoonlijke aandacht', 'Stabiliteit', 'Onderhoudbaarheid', 'Betrouwbaarheid'],
       whyEyebrow: '05 / Waarom Everware',
-      whyH2: 'Standaardsoftware forceert jouw process. Wij verbeteren jouw process.',
+      whyH2: 'Standaardsoftware forceert jouw proces. Wij verbeteren jouw proces.',
       whyLead: 'De meeste tools zijn gebouwd voor de gemiddelde klant — aan jou is niets gemiddeld! Wij beginnen bij jouw proces en bouwen daaromheen.',
       whyColATitle: 'Van de plank',
       whyColBTitle: 'Everware maatwerk',
@@ -72,7 +74,7 @@
         { level: 'Level 02', title: 'Ontwerp & architectuur', desc: 'Een fundament dat meegroeit — doordacht, ontworpen op stabiliteit, niet op haast.', meta: 'Systeemontwerp · Roadmap · UX' },
         { level: 'Level 03', title: 'Maatwerk software', desc: 'Applicaties, platformen en interne tools — volledig op maat gebouwd rond jouw processen.', meta: 'Native, Web & mobiel · Interne tools · Integraties' },
         { level: 'Level 04', title: 'AI oplossingen', desc: "Maatwerk AI die past bij jouw data en processen — geen demo's, maar iets dat productie haalt.", meta: 'LLM-toepassingen · RAG · Eigen modellen' },
-        { level: 'Level 05', title: 'Autonome agents', desc: 'Agents die werk voor jouw uit handen nemen — betrouwbaar, controleerbaar en met de mens aan het roer.', meta: 'Workflows · Tool-use · Orchestratie' },
+        { level: 'Level 05', title: 'Autonome agents', desc: 'Agents die werk voor jou uit handen nemen — betrouwbaar, controleerbaar en met de mens aan het roer.', meta: 'Workflows · Tool-use · Orchestratie' },
         { level: 'Level 0A', title: 'Advies', desc: 'Meedenken over de juiste keuzes — onafhankelijk en objectief.', meta: 'Second opinion · Strategie · Begeleiding' }
       ],
       wpEyebrow: '03 / Werkwijze',
@@ -84,7 +86,7 @@
         { n: '03', title: 'Op de koffie', desc: 'Een rondleiding van het huis. Neem ons mee in jullie bedrijf — hier inventariseren we het volledige huidige proces.' },
         { n: '04', title: 'Ontwerp & architectuur', desc: 'We optimaliseren dat proces en ontwerpen de software die deze optimalisatie ondersteunt.' },
         { n: '05', title: 'Bouw', desc: 'Maatwerk, test-driven & AI-driven ontwikkeling — in korte, zichtbare iteraties. Built for the long haul.' },
-        { n: '06', title: 'Onderhoud & doorontwikkeling', desc: 'We blijven betrokken. Onderhoudbaarheid en bruikbaarheid staat centraal — ook na oplevering.' }
+        { n: '06', title: 'Onderhoud & doorontwikkeling', desc: 'We blijven betrokken. Onderhoudbaarheid en bruikbaarheid staan centraal — ook na oplevering.' }
       ],
       abEyebrow: '04 / Over ons',
       abH2: 'Klein team, volledige toewijding.',
@@ -139,11 +141,13 @@
       ],
       words: ['AI', 'Software', 'Agents', 'Automation', 'Advice', 'Processes', 'Solutions', 'Architecture', 'Data'],
       title: 'Everware — Custom software, AI & autonomous agents',
-      heroEyebrow: '~/everware — custom',
+      metaDesc: 'Everware — Dutch custom software agency. Bespoke software, AI solutions and autonomous agents, with personal attention.',
+      ogDesc: 'From first conversation to autonomous agents. We build bespoke — with personal attention, stability and maintainability.',
+      heroEyebrow: '~/everware — Custom software',
       heroTitleWord: 'Custom',
       heroDesc: 'From first conversation to autonomous agents. We build bespoke — with personal attention.',
       heroCta1: 'Book a call',
-      heroCta2: 'See how we work →',
+      heroCta2: 'View our process →',
       heroIndex: [
         { n: '01', label: 'Process optimization' },
         { n: '02', label: 'Design & architecture' },
@@ -154,8 +158,8 @@
       ],
       status: ['Personal attention', 'Stability', 'Maintainability', 'Reliability'],
       whyEyebrow: '05 / Why Everware',
-      whyH2: 'Off-the-shelf software forces you into its shape. We do it the other way around.',
-      whyLead: 'Most tools are built for the average customer — not for yours. We start with your process and build around it.',
+      whyH2: 'Off-the-shelf software forces your process. We improve your process.',
+      whyLead: 'Most tools are built for the average customer — nothing about you is average! We start with your process and build around it.',
       whyColATitle: 'Off the shelf',
       whyColBTitle: 'Everware custom',
       whyColA: [
@@ -166,7 +170,7 @@
         "A black box — you can't see what happens"
       ],
       whyColB: [
-        'Software adapts to your process',
+        'Software adapts to your process and actively helps you improve, accelerate and automate.',
         'Only what you need, nothing more',
         'One fixed team that knows you by name',
         'You own the code and the data',
@@ -190,7 +194,7 @@
         { level: 'Level 01', title: 'Process optimization', desc: 'We map your processes and strip out the noise — before we build anything.', meta: 'Analysis · Workflows · Automation' },
         { level: 'Level 02', title: 'Design & architecture', desc: 'A foundation that grows with you — considered, designed for stability, not for haste.', meta: 'System design · Roadmap · UX' },
         { level: 'Level 03', title: 'Custom software', desc: 'Applications, platforms and internal tools — fully built around your processes.', meta: 'Native, web & mobile · Internal tools · Integrations' },
-        { level: 'Level 04', title: 'AI solutions', desc: 'AI that fits your data and processes — no demos, but something that reaches production.', meta: 'LLM applications · RAG · Custom models' },
+        { level: 'Level 04', title: 'AI solutions', desc: 'Custom AI that fits your data and processes — no demos, but something that reaches production.', meta: 'LLM applications · RAG · Custom models' },
         { level: 'Level 05', title: 'Autonomous agents', desc: 'Agents that take work off your hands — reliable, controllable, with a human at the helm.', meta: 'Workflows · Tool-use · Orchestration' },
         { level: 'Level 0A', title: 'Advisory', desc: 'Thinking along about the right choices — independent and objective.', meta: 'Second opinion · Strategy · Guidance' }
       ],
@@ -199,20 +203,20 @@
       wpStepWord: 'step',
       wpSteps: [
         { n: '01', title: 'Introduction', desc: "A short call. Who are you and what's your vision? We sense whether we're a match." },
-        { n: '02', title: 'Brainstorm', desc: 'A longer session. Which problems and bottlenecks do you face — and what do you suspect you want to automate?' },
+        { n: '02', title: 'Brainstorm', desc: 'A longer session. Which problems or bottlenecks do you face — and what do you suspect you want to automate?' },
         { n: '03', title: 'Over coffee', desc: 'A tour of the house. Take us through your business — here we inventory the full current process.' },
         { n: '04', title: 'Design & architecture', desc: 'We optimize that process and design the software that supports the optimization.' },
         { n: '05', title: 'Build', desc: 'Custom, test-driven & AI-driven development — in short, visible iterations. Built for the long haul.' },
-        { n: '06', title: 'Maintenance & evolution', desc: 'We stay involved. Maintainability and usability stay central — also after delivery.' }
+        { n: '06', title: 'Maintenance & evolution', desc: 'We stay involved. Maintainability and usability remain central — even after delivery.' }
       ],
       abEyebrow: '04 / About',
       abH2: 'Small team, full commitment.',
       abParas: [
-        'Everware is a Dutch custom software studio. We build software, AI solutions and autonomous agents that fit your processes and tools — no standard packages, no compromises.',
+        'Everware is a Dutch custom software agency. We build software, AI solutions and autonomous agents that fit your processes and tools — no standard packages, no compromises.',
         'We work with a small team where personal attention comes first. From the first conversation to years of maintenance. We build with stability and maintainability in mind, so what we make lasts for years.'
       ],
       abRows: [
-        { label: 'Region', lines: ['Netherlands · remote-first · on-site'] },
+        { label: 'Service area', lines: ['Netherlands · remote-first · on-site'] },
         { label: 'Focus', lines: ['custom software · AI · agents', 'process automation'] },
         { label: 'Approach', lines: ['personal · long-term involved'] }
       ],
@@ -228,7 +232,7 @@
         { q: 'Do you stay involved after delivery?', a: 'Yes. Maintenance and further development are part of it. We stay involved so your software stays reliable and grows with you.' },
         { q: 'What does a project cost?', a: 'That depends on what you want to build. After a no-obligation introductory call we give a clear picture of scope and investment.' }
       ],
-      ctH2: 'Ready for custom?',
+      ctH2: 'Ready for custom software?',
       ctLead: "Let's have a no-obligation chat. Calling or emailing costs nothing!",
       ctNaam: 'Name', ctNaamPh: 'Your name',
       ctEmail: 'Email', ctEmailPh: 'you@company.com',
@@ -281,6 +285,9 @@
     document.documentElement.lang = lang;
     const t = copy[lang];
     document.title = t.title;
+    document.querySelector('meta[name="description"]').setAttribute('content', t.metaDesc);
+    document.querySelector('meta[property="og:title"]').setAttribute('content', t.title);
+    document.querySelector('meta[property="og:description"]').setAttribute('content', t.ogDesc);
     document.querySelectorAll('[data-t]').forEach(el => {
       const v = get(t, el.getAttribute('data-t'));
       if (typeof v === 'string') el.textContent = v;
@@ -547,7 +554,8 @@
   document.addEventListener('scroll', updateHeader, true);
   window.addEventListener('resize', updateHeader, { passive: true });
 
-  applyLang(CONFIG.defaultLang);
+  const urlLang = new URLSearchParams(location.search).get('lang');
+  applyLang(urlLang === 'en' || urlLang === 'nl' ? urlLang : CONFIG.defaultLang);
   startGlows();
   startWeb();
 })();
