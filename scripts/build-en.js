@@ -30,6 +30,8 @@ html = html
   .replace(/(<meta name="description" content=")[^"]*(")/, `$1${escAttr(t.metaDesc)}$2`)
   .replace(/(<meta property="og:title" content=")[^"]*(")/, `$1${escAttr(t.title)}$2`)
   .replace(/(<meta property="og:description" content=")[^"]*(")/, `$1${escAttr(t.ogDesc)}$2`)
+  .replace(/(<meta name="twitter:title" content=")[^"]*(")/, `$1${escAttr(t.title)}$2`)
+  .replace(/(<meta name="twitter:description" content=")[^"]*(")/, `$1${escAttr(t.ogDesc)}$2`)
   .replace(`<meta property="og:url" content="${SITE_URL}/">`, `<meta property="og:url" content="${SITE_URL}/en/">`)
   .replace('<meta property="og:locale" content="nl_NL">', '<meta property="og:locale" content="en_US">')
   .replace('<meta property="og:locale:alternate" content="en_US">', '<meta property="og:locale:alternate" content="nl_NL">')
