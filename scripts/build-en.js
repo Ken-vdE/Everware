@@ -45,7 +45,8 @@ html = html
 // Language toggle targets
 html = html
   .replace('id="ew-lang-nl" class="ew-langbtn" href="./"', 'id="ew-lang-nl" class="ew-langbtn" href="../"')
-  .replace('id="ew-lang-en" class="ew-langbtn" href="en/"', 'id="ew-lang-en" class="ew-langbtn" href="./"');
+  .replace('id="ew-lang-en" class="ew-langbtn" href="en/"', 'id="ew-lang-en" class="ew-langbtn" href="./"')
+  .replace('aria-label="Hoofdnavigatie"', 'aria-label="Main navigation"');
 
 // Translate every data-t leaf (all data-t elements contain text only)
 const missing = [];

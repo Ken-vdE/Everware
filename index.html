@@ -41,7 +41,7 @@
     <div class="ew-nav" style="max-width:1600px;width:100%;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 60px;box-sizing:border-box">
       <div style="font-weight:700;font-size:20px;letter-spacing:-.02em">Everware</div>
       <div style="display:flex;align-items:center;gap:26px">
-        <div class="ew-navlinks" style="display:flex;flex-wrap:wrap;gap:12px 26px;font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.04em">
+        <nav class="ew-navlinks" aria-label="Hoofdnavigatie" style="display:flex;flex-wrap:wrap;gap:12px 26px;font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.04em">
           <a class="ew-navlink" data-nav="capaciteiten" href="#capaciteiten" data-t="nav.0.label">Capaciteiten</a>
           <a class="ew-navlink" data-nav="diensten" href="#diensten" data-t="nav.1.label">Diensten</a>
           <a class="ew-navlink" data-nav="werkwijze" href="#werkwijze" data-t="nav.2.label">Werkwijze</a>
@@ -49,7 +49,7 @@
           <a class="ew-navlink" data-nav="waarom" href="#waarom" data-t="nav.4.label">Waarom</a>
           <a class="ew-navlink" data-nav="faq" href="#faq" data-t="nav.5.label">FAQ</a>
           <a class="ew-navlink" data-nav="contact" href="#contact" data-t="nav.6.label">Contact</a>
-        </div>
+        </nav>
         <div style="display:flex;align-items:center;gap:7px;font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.04em">
           <a id="ew-lang-nl" class="ew-langbtn" href="./" style="text-decoration:none">NL</a>
           <span style="opacity:.28">/</span>
@@ -58,6 +58,8 @@
       </div>
     </div>
   </header>
+
+  <main>
 
   <!-- ============ HERO ============ -->
   <section id="ew-hero" data-screen-label="Hero" data-theme="dark" style="position:relative;background:#050505;color:#fff;overflow:hidden;min-height:100vh;display:flex;flex-direction:column">
@@ -373,7 +375,7 @@
       </div>
     </div>
 
-    <div style="position:relative;margin-top:120px;border-top:1px solid rgba(255,255,255,.14)">
+    <footer style="position:relative;margin-top:120px;border-top:1px solid rgba(255,255,255,.14)">
       <div style="max-width:1240px;margin:0 auto;box-sizing:border-box;padding:60px 48px 0">
         <div class="ew-footer-grid" style="display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:44px">
           <div>
@@ -406,8 +408,10 @@
           <span data-t="ftCopyRight">Custom software, AI &amp; agents</span>
         </div>
       </div>
-    </div>
+    </footer>
   </section>
+
+  </main>
 
 </div>
 </body>
