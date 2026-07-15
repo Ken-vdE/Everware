@@ -64,7 +64,7 @@
         { label: 'Frontend', lines: ['React or Next · Vue or Nuxt', 'PWA · Web Components · WASM', 'React Native or Expo · iOS · Android'] },
         { label: 'AI & ML', lines: ["LLM's · RAG · Generative AI", 'fine-tuning · eigen modellen'] },
         { label: 'Agents', lines: ['workflows · tool-use · orchestratie'] },
-        { label: 'Cloud & infra', lines: ['Railway · Fly.io · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD'] },
+        { label: 'Cloud & infra', lines: ['Fly.io · Render · Railway · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD'] },
         { label: 'Data', lines: ['pipelines · integraties · dashboards', 'MySQL · PostgreSQL · Supabase'] }
       ],
       svEyebrow: '02 / Diensten',
@@ -120,6 +120,7 @@
       ctSubmit: 'Verstuur bericht →',
       ctOrPre: 'of mail', ctOrMid: 'of bel',
       ctAvg: 'Door te versturen ga je akkoord dat we contact met je opnemen over je aanvraag. Geen nieuwsbrief, geen spam.',
+      ctErr: 'Versturen mislukt. Probeer het opnieuw of mail ons direct.',
       ctSentTag: '// verzonden',
       ctSentTitle: 'Bedankt voor je bericht.',
       ctSentBody: 'We nemen binnen één werkdag persoonlijk contact met je op.',
@@ -185,7 +186,7 @@
         { label: 'Frontend', lines: ['React or Next · Vue or Nuxt', 'PWA · Web Components · WASM', 'React Native or Expo · iOS · Android'] },
         { label: 'AI & ML', lines: ["LLM's · RAG · Generative AI", 'fine-tuning · custom models'] },
         { label: 'Agents', lines: ['workflows · tool-use · orchestration'] },
-        { label: 'Cloud & infra', lines: ['Railway · Fly.io · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD'] },
+        { label: 'Cloud & infra', lines: ['Fly.io · Render · Railway · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD'] },
         { label: 'Data', lines: ['pipelines · integrations · dashboards', 'MySQL · PostgreSQL · Supabase'] }
       ],
       svEyebrow: '02 / Services',
@@ -241,6 +242,7 @@
       ctSubmit: 'Send message →',
       ctOrPre: 'or email', ctOrMid: 'or call',
       ctAvg: 'By sending this you agree we may contact you about your request. No newsletter, no spam.',
+      ctErr: 'Sending failed. Please try again or email us directly.',
       ctSentTag: '// sent',
       ctSentTitle: 'Thanks for your message.',
       ctSentBody: "We'll get back to you personally within one business day.",
@@ -538,10 +540,36 @@
   }
 
   // ---- contact form ----
-  formEl.addEventListener('submit', (e) => {
+  formEl.addEventListener('submit', async (e) => {
     e.preventDefault();
-    formEl.style.display = 'none';
-    sentEl.style.display = 'block';
+    const btn = formEl.querySelector('button[type="submit"]');
+    const errEl = document.getElementById('ew-form-err');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.style.opacity = '.6';
+    const fd = new FormData(formEl);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: fd.get('name'),
+          email: fd.get('email'),
+          company: fd.get('company') || null,
+          message: fd.get('message'),
+          website: fd.get('website') || ''
+        })
+      });
+      if (!res.ok) throw new Error('send failed: ' + res.status);
+      formEl.reset();
+      formEl.style.display = 'none';
+      sentEl.style.display = 'block';
+    } catch {
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.style.opacity = '';
+    }
   });
   againBtn.addEventListener('click', () => {
     sentEl.style.display = 'none';

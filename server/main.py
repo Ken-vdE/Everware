@@ -1,0 +1,117 @@
+"""FastAPI wrapper: serves the static site from public/ and handles the contact form."""
+
+import logging
+import os
+from logging.handlers import RotatingFileHandler
+from pathlib import Path
+
+import httpx
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, EmailStr, Field
+
+PUBLIC = Path(__file__).resolve().parent.parent / "public"
+RESEND_URL = "https://api.resend.com/emails"
+
+LOG_DIR = Path(os.getenv("LOG_DIR", Path(__file__).resolve().parent.parent / "logs"))
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = LOG_DIR / "everware.log"
+LOG_FORMAT = "%(asctime)s %(levelname)s %(name)s: %(message)s"
+
+logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
+logger = logging.getLogger("everware")
+if not any(isinstance(h, RotatingFileHandler) for h in logger.handlers):
+    _file_handler = RotatingFileHandler(LOG_FILE, maxBytes=1_000_000, backupCount=5)
+    _file_handler.setFormatter(logging.Formatter(LOG_FORMAT))
+    logger.addHandler(_file_handler)
+
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+
+
+@app.exception_handler(Exception)
+async def log_unhandled_exception(request: Request, exc: Exception):
+    logger.error(
+        "unhandled exception on %s from %s",
+        request.url.path,
+        request.client.host if request.client else "?",
+        exc_info=exc,
+    )
+    return JSONResponse(status_code=500, content={"detail": "Internal Server Error"})
+
+
+@app.exception_handler(RequestValidationError)
+async def log_validation_error(request: Request, exc: RequestValidationError):
+    logger.warning(
+        "validation error on %s from %s: %s; body=%r",
+        request.url.path,
+        request.client.host if request.client else "?",
+        exc.errors(),
+        exc.body,
+    )
+    return await request_validation_exception_handler(request, exc)
+
+
+class ContactIn(BaseModel):
+    name: str = Field(min_length=2, max_length=200)
+    email: EmailStr
+    company: str | None = Field(default=None, max_length=200)
+    message: str = Field(min_length=10, max_length=5000)
+    website: str = ""  # honeypot — humans never see or fill this field
+
+
+@app.post("/api/contact")
+async def contact(msg: ContactIn, request: Request):
+    client_ip = request.client.host if request.client else "?"
+
+    if msg.website:
+        # Bot filled the honeypot: pretend success so it doesn't adapt.
+        logger.info("honeypot tripped from %s (email=%s)", client_ip, msg.email)
+        return {"ok": True}
+
+    api_key = os.getenv("RESEND_API_KEY")
+    if not api_key:
+        logger.error("contact submission from %s but RESEND_API_KEY is not set", client_ip)
+        raise HTTPException(status_code=503, detail="Contact form not configured")
+
+    to = os.getenv("CONTACT_TO", "hallo@everware.nl")
+    sender = os.getenv("CONTACT_FROM", "onboarding@resend.dev")
+    company = f"\nCompany: {msg.company}" if msg.company else ""
+
+    try:
+        async with httpx.AsyncClient(timeout=10) as http:
+            r = await http.post(
+                RESEND_URL,
+                headers={"Authorization": f"Bearer {api_key}"},
+                json={
+                    "from": sender,
+                    "to": [to],
+                    "reply_to": [msg.email],
+                    "subject": f"Contact form: {msg.name}",
+                    "text": (
+                        f"Name: {msg.name}\nEmail: {msg.email}{company}\n\n{msg.message}"
+                    ),
+                },
+            )
+    except httpx.HTTPError:
+        logger.exception(
+            "Resend request failed; lost submission: name=%r email=%s company=%r message=%r",
+            msg.name, msg.email, msg.company, msg.message,
+        )
+        raise HTTPException(status_code=503, detail="Email delivery failed")
+
+    if r.is_error:
+        logger.error(
+            "Resend returned %s: %s; lost submission: name=%r email=%s company=%r message=%r",
+            r.status_code, r.text, msg.name, msg.email, msg.company, msg.message,
+        )
+        raise HTTPException(status_code=503, detail="Email delivery failed")
+
+    logger.info("contact email sent for %s (resend id=%s)", msg.email, r.json().get("id"))
+    return {"ok": True}
+
+
+# Mounted last: everything not matched above is served from public/.
+app.mount("/", StaticFiles(directory=PUBLIC, html=True), name="site")

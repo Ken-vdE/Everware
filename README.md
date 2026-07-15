@@ -1,32 +1,69 @@
 # Everware
 
-Static marketing site for Everware — Dutch custom software, AI & autonomous agents agency.
-Plain HTML/CSS/JS, no framework, no build dependencies beyond Node.
+Marketing site for Everware — Dutch custom software, AI & autonomous agents agency.
+Static HTML/CSS/JS in `public/`, wrapped by a small FastAPI app that serves the
+site and handles the contact form (via [Resend](https://resend.com)).
 
 ## Structure
 
 ```
-index.html          Dutch page (source of truth for all content)
-en/index.html       English page — GENERATED, do not edit by hand
-assets/main.js      Interactivity + the nl/en translation table (`copy`)
-assets/style.css    Responsive rules, hover/focus states
-scripts/build-en.js Generates en/index.html from index.html + copy.en
-sitemap.xml         Both language URLs with hreflang alternates
-robots.txt          Points crawlers to the sitemap
-llms.txt            Machine-readable site summary for LLM crawlers
-assets/og-image.png Social share image (1200×630); source: scripts/og-image.html
-scripts/og-image.html Source page for the og-image render
+public/index.html      Dutch page (source of truth for all content)
+public/en/index.html   English page — GENERATED, do not edit by hand
+public/assets/main.js  Interactivity + the nl/en translation table (`copy`)
+public/assets/style.css Responsive rules, hover/focus states
+public/sitemap.xml     Both language URLs with hreflang alternates
+public/robots.txt      Points crawlers to the sitemap
+public/llms.txt        Machine-readable site summary for LLM crawlers
+public/assets/og-image.png Social share image (1200×630); source: scripts/og-image.html
+server/main.py         FastAPI app: POST /api/contact + static mount of public/
+scripts/build-en.js    Generates public/en/index.html from index.html + copy.en
+scripts/og-image.html  Source page for the og-image render
+tests/test_server.py   API + static-serving tests (pytest)
+pyproject.toml         Python project (uv)
+.env.example           Template for required environment variables
 ```
+
+## Backend
+
+`server/main.py` is intentionally tiny:
+
+- `POST /api/contact` — validates `{name, email, company?, message}` and
+  forwards it via the Resend API. A hidden `website` honeypot field silently
+  drops bot submissions. Returns 503 if Resend fails or no API key is
+  configured. Every rejected or failed request — including unhandled
+  exceptions (500, with traceback) — is logged (logger `everware`);
+  delivery failures log the full submission so no lead is lost. Logs go to
+  stderr and to `logs/everware.log` (rotating, 1 MB × 5; override the
+  directory with `LOG_DIR`).
+- Everything else is served from `public/` (`StaticFiles`, `html=True`), so
+  adding a file to `public/` publishes it — no route needed. Swagger/OpenAPI
+  endpoints are disabled.
+
+Configuration (see `.env.example`): `RESEND_API_KEY` (required for sending),
+`CONTACT_TO` (default `hallo@everware.nl`), `CONTACT_FROM` (must be a
+Resend-verified sender; `onboarding@resend.dev` works for testing).
+
+## Development
+
+```sh
+uv sync                          # once: install dependencies
+cp .env.example .env             # fill in RESEND_API_KEY
+uv run --env-file .env uvicorn server.main:app --reload   # http://localhost:8000
+uv run pytest                    # run the test suite
+```
+
+The contact form degrades cleanly without a key: the API returns 503 and the
+form shows its error line.
 
 ## Languages & SEO
 
 Dutch is the main language and lives at `/`. English is a fully static,
 independently indexable page at `/en/`:
 
-- Every translatable element in `index.html` carries a `data-t="key"`
+- Every translatable element in `public/index.html` carries a `data-t="key"`
   (or `data-t-ph` for input placeholders) resolving into the `copy`
-  object in `assets/main.js`. Dutch text is baked into the HTML;
-  English text is baked into the generated `en/index.html`.
+  object in `public/assets/main.js`. Dutch text is baked into the HTML;
+  English text is baked into the generated `public/en/index.html`.
 - The NL/EN header toggle is a plain link between `/` and `/en/`,
   so crawlers discover both pages without JavaScript.
 - Both pages declare `rel="canonical"` plus `hreflang` alternates
@@ -34,8 +71,8 @@ independently indexable page at `/en/`:
 
 ### Editing content
 
-1. Edit the Dutch text in `index.html` **and** the matching key in
-   `copy.nl` in `assets/main.js` (JS re-applies strings at runtime,
+1. Edit the Dutch text in `public/index.html` **and** the matching key in
+   `copy.nl` in `public/assets/main.js` (JS re-applies strings at runtime,
    so they must stay in sync).
 2. Update the English translation in `copy.en`.
 3. Regenerate the English page:
@@ -48,39 +85,38 @@ independently indexable page at `/en/`:
 
 ### Domain
 
-`https://everware.nl` is hardcoded in `index.html` (head), `scripts/build-en.js`
-(`SITE_URL`), `sitemap.xml` and `robots.txt`. Update all four when the domain changes.
+`https://everware.nl` is hardcoded in `public/index.html` (head),
+`scripts/build-en.js` (`SITE_URL`), `public/sitemap.xml` and
+`public/robots.txt`. Update all four when the domain changes.
 
 ### Structured data & AI indexation
 
 - JSON-LD (`ProfessionalService`, `WebSite`, `WebPage`, `FAQPage`) is
   GENERATED by `scripts/build-en.js` for both languages from the `copy`
-  table: the Dutch block inside `index.html` is rewritten in place, the
-  English block is baked into `en/index.html`. Never hand-edit the
-  `<script type="application/ld+json">` blocks — edit `copy` and rebuild.
-- `llms.txt` is a hand-written English summary for LLM crawlers
+  table: the Dutch block inside `public/index.html` is rewritten in place,
+  the English block is baked into `public/en/index.html`. Never hand-edit
+  the `<script type="application/ld+json">` blocks — edit `copy` and rebuild.
+- `public/llms.txt` is a hand-written English summary for LLM crawlers
   (llmstxt.org convention). Update it when services/contact facts change.
-- `robots.txt` explicitly allows the major AI crawlers.
-- Bump `<lastmod>` in `sitemap.xml` on every content change.
+- `public/robots.txt` explicitly allows the major AI crawlers.
+- Bump `<lastmod>` in `public/sitemap.xml` on every content change.
 - Regenerate the og-image after brand changes:
 
   ```sh
   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
     --headless --disable-gpu --hide-scrollbars \
     --window-size=1200,630 --virtual-time-budget=10000 \
-    --screenshot=assets/og-image.png "file://$PWD/scripts/og-image.html"
+    --screenshot=public/assets/og-image.png "file://$PWD/scripts/og-image.html"
   ```
 
 ## Hosting
 
-Any static host. Requirements:
-
-- Serve `en/index.html` for `/en/` (standard directory index behaviour).
-- No server-side code needed. The contact form is front-end only —
-  wire it to a backend or form service before launch.
-
-## Development
+Run the FastAPI app behind any ASGI-capable setup, e.g.:
 
 ```sh
-python3 -m http.server 8080   # then open http://localhost:8080
+uv run --env-file .env uvicorn server.main:app --host 0.0.0.0 --port 8000
 ```
+
+The `public/` directory also still works on any static host if the contact
+form is pointed at a hosted `/api/contact` (or disabled) — nothing in the
+HTML depends on the Python server except that endpoint.
