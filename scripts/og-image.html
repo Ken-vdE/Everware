@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0}
+  body{width:1200px;height:630px;overflow:hidden;background:#050505;color:#fff;font-family:'Space Grotesk',sans-serif;position:relative}
+  .dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:28px 28px}
+  .glow{position:absolute;top:50%;left:38%;transform:translate(-50%,-50%);width:900px;height:480px;background:radial-gradient(ellipse at center,rgba(59,130,246,.32),transparent 70%);filter:blur(36px)}
+  .wrap{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:0 96px;box-sizing:border-box}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.28em;color:rgba(255,255,255,.45);text-transform:uppercase;margin-bottom:30px}
+  h1{margin:0;font-weight:700;font-size:120px;line-height:.95;letter-spacing:-.035em;text-shadow:0 0 40px rgba(255,255,255,.22)}
+  h1 .b{color:rgba(59,130,246,.55);font-weight:500}
+  h1 .a{color:#3B82F6;text-shadow:0 0 30px #3B82F699}
+  .tag{margin-top:34px;font-family:'JetBrains Mono',monospace;font-size:24px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+  .tag span{color:#3B82F6}
+  .cursor{display:inline-block;width:26px;height:64px;background:#3B82F6;box-shadow:0 0 26px rgba(59,130,246,.7);vertical-align:baseline;transform:translateY(6px);margin-left:14px}
+</style>
+</head>
+<body>
+<div class="dots"></div>
+<div class="glow"></div>
+<div class="wrap">
+  <div class="eyebrow">~/everware</div>
+  <h1>Everware <span class="b">[</span><span class="a">AI</span><span class="b">]</span><span class="cursor"></span></h1>
+  <div class="tag">Software <span>·</span> AI <span>·</span> Agents</div>
+</div>
+</body>
+</html>

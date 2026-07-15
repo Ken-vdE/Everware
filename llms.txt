@@ -1,0 +1,31 @@
+# Everware
+
+> Everware is a Dutch custom software agency building bespoke software, AI solutions and autonomous agents — with personal attention, built for stability and maintainability. Site: https://everware.nl (Dutch, canonical) and https://everware.nl/en/ (English).
+
+Everware works for organizations that hit the limits of off-the-shelf software. One small team covers the full stack — from process analysis to years of maintenance — and starts from the client's process, not from a ready-made product. Clients own the code and the data.
+
+## Services
+
+- Process optimization: mapping processes and removing noise before building anything.
+- Design & architecture: foundations designed for stability and growth (system design, roadmap, UX).
+- Custom software: applications, platforms and internal tools built around the client's processes (web, native, mobile, integrations).
+- AI solutions: production-grade custom AI — LLM applications, RAG, custom models.
+- Autonomous agents: reliable, controllable agents with a human at the helm (workflows, tool-use, orchestration).
+- Advisory: independent second opinions, strategy and guidance.
+
+## How we work
+
+Introduction call → brainstorm → on-site process inventory → design & architecture → build (test-driven, AI-driven, short visible iterations) → maintenance & evolution.
+
+## Facts
+
+- Legal: Dutch company, KvK (Chamber of Commerce) 89042786
+- Email: hallo@everware.nl
+- Phone: +31 6 12345678
+- Service area: Netherlands (remote-first, on-site when useful)
+- Languages: Dutch (primary), English
+
+## Pages
+
+- [Home (Dutch)](https://everware.nl/): services, process, about, FAQ, contact
+- [Home (English)](https://everware.nl/en/): full English translation of the same page
