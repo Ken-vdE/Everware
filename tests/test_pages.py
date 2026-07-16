@@ -1,10 +1,20 @@
 """Tests for the translation source and the startup-rendered pages."""
 
 import json
+import re
 from pathlib import Path
 
+from fastapi.testclient import TestClient
+
+from server.main import app  # importing renders the pages
+
 ROOT = Path(__file__).resolve().parent.parent
-COPY = json.loads((ROOT / "content" / "copy.json").read_text())
+COPY = json.loads((ROOT / "content" / "copy.json").read_text(encoding="utf-8"))
+client = TestClient(app)
+
+JSONLD_RE = re.compile(
+    r'<script type="application/ld\+json">\s*(.*?)\s*</script>', re.S
+)
 
 
 def shape(node):
@@ -28,19 +38,6 @@ def test_nl_en_have_identical_structure():
 def test_nav_aria_key_present():
     assert COPY["nl"]["navAria"] == "Hoofdnavigatie"
     assert COPY["en"]["navAria"] == "Main navigation"
-
-
-import re
-
-from fastapi.testclient import TestClient
-
-from server.main import app  # importing renders the pages
-
-client = TestClient(app)
-
-JSONLD_RE = re.compile(
-    r'<script type="application/ld\+json">\s*(.*?)\s*</script>', re.S
-)
 
 
 def test_dutch_page_rendered_from_copy():

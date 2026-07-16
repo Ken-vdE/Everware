@@ -92,7 +92,7 @@ def jsonld(lang: str, t: dict, url_path: str) -> str:
 
 
 def render_pages() -> None:
-    copy = json.loads((ROOT / "content" / "copy.json").read_text())
+    copy = json.loads((ROOT / "content" / "copy.json").read_text(encoding="utf-8"))
     env = Environment(
         loader=FileSystemLoader(ROOT / "templates"),
         autoescape=True,
@@ -117,4 +117,8 @@ def render_pages() -> None:
             jsonld=Markup(jsonld(lang, t, url_path)),
         )
         out.parent.mkdir(parents=True, exist_ok=True)
-        out.write_text(html)
+        # Atomic replace: a respawning worker must never expose a truncated
+        # page to a sibling worker serving from the same directory.
+        tmp = out.with_suffix(".tmp")
+        tmp.write_text(html, encoding="utf-8")
+        tmp.replace(out)
