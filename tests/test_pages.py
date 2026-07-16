@@ -96,6 +96,17 @@ def test_og_image_alt_from_copy():
         assert f'<meta property="og:image:alt" content="{COPY[lang]["ogImageAlt"]}"' in page
 
 
+def test_render_logs_pages(caplog):
+    from server import render
+
+    with caplog.at_level("INFO", logger="everware.render"):
+        render.render_pages()
+    assert "site_url=" in caplog.text
+    assert "public/index.html" in caplog.text
+    assert "public/en/index.html" in caplog.text
+    assert "render complete" in caplog.text
+
+
 def test_site_url_env_override(monkeypatch):
     from server import render
 

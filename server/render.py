@@ -3,7 +3,9 @@ templates/index.html.j2 + content/copy.json. Called once at startup by
 server.main — serving stays fully static afterwards."""
 
 import json
+import logging
 import os
+import time
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
@@ -12,6 +14,10 @@ from markupsafe import Markup
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "public"
 DEFAULT_SITE_URL = "https://everware.nl"
+
+# Child of the "everware" logger configured in server.main — records propagate
+# to its stderr + rotating-file handlers.
+logger = logging.getLogger("everware.render")
 
 
 def site_url() -> str:
@@ -98,6 +104,7 @@ def jsonld(lang: str, t: dict, url_path: str, site: str) -> str:
 
 
 def render_pages() -> None:
+    start = time.perf_counter()
     copy = json.loads((ROOT / "content" / "copy.json").read_text(encoding="utf-8"))
     env = Environment(
         loader=FileSystemLoader(ROOT / "templates"),
@@ -106,6 +113,7 @@ def render_pages() -> None:
     )
     template = env.get_template("index.html.j2")
     site = site_url()
+    logger.info("rendering pages (site_url=%s)", site)
     pages = [
         ("nl", PUBLIC / "index.html", "/", "assets/", "./", "en/"),
         ("en", PUBLIC / "en" / "index.html", "/en/", "../assets/", "../", "./"),
@@ -130,3 +138,5 @@ def render_pages() -> None:
         tmp = out.with_suffix(".tmp")
         tmp.write_text(html, encoding="utf-8")
         tmp.replace(out)
+        logger.info("rendered %s (%s, %d bytes)", out.relative_to(ROOT), lang, len(html))
+    logger.info("render complete in %.0f ms", (time.perf_counter() - start) * 1000)
