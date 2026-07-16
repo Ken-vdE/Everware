@@ -1,0 +1,626 @@
+{
+  "nl": {
+    "nav": [
+      {
+        "id": "capaciteiten",
+        "label": "Capaciteiten"
+      },
+      {
+        "id": "diensten",
+        "label": "Diensten"
+      },
+      {
+        "id": "werkwijze",
+        "label": "Werkwijze"
+      },
+      {
+        "id": "over-ons",
+        "label": "Over ons"
+      },
+      {
+        "id": "waarom",
+        "label": "Waarom"
+      },
+      {
+        "id": "faq",
+        "label": "FAQ"
+      },
+      {
+        "id": "contact",
+        "label": "Contact"
+      }
+    ],
+    "words": [
+      "AI",
+      "Software",
+      "Agents",
+      "Automatisering",
+      "Advies",
+      "Processen",
+      "Oplossingen",
+      "Architectuur",
+      "Data"
+    ],
+    "title": "Everware — Maatwerk software, AI & autonome agents",
+    "metaDesc": "Everware — Nederlands maatwerk-softwarebureau. Software, AI-oplossingen en autonome agents op maat, met persoonlijke aandacht.",
+    "ogDesc": "Van eerste gesprek tot autonome agents. Wij bouwen op maat — met persoonlijke aandacht, stabiliteit en onderhoudbaarheid.",
+    "heroEyebrow": "~/everware — Software op maat",
+    "heroTitleWord": "Maatwerk",
+    "heroDesc": "Van eerste gesprek tot autonome agents. Wij bouwen op maat — met persoonlijke aandacht.",
+    "heroCta1": "Plan een gesprek",
+    "heroCta2": "Bekijk werkwijze →",
+    "heroIndex": [
+      {
+        "n": "01",
+        "label": "Procesoptimalisatie"
+      },
+      {
+        "n": "02",
+        "label": "Ontwerp & architectuur"
+      },
+      {
+        "n": "03",
+        "label": "Maatwerk software"
+      },
+      {
+        "n": "04",
+        "label": "AI oplossingen"
+      },
+      {
+        "n": "05",
+        "label": "Autonome agents"
+      },
+      {
+        "n": "0A",
+        "label": "Advies"
+      }
+    ],
+    "status": [
+      "Persoonlijke aandacht",
+      "Stabiliteit",
+      "Onderhoudbaarheid",
+      "Betrouwbaarheid"
+    ],
+    "whyEyebrow": "05 / Waarom Everware",
+    "whyH2": "Standaardsoftware forceert jouw proces. Wij verbeteren jouw proces.",
+    "whyLead": "De meeste tools zijn gebouwd voor de gemiddelde klant — aan jou is niets gemiddeld! Wij beginnen bij jouw proces en bouwen daaromheen.",
+    "whyColATitle": "Van de plank",
+    "whyColBTitle": "Everware maatwerk",
+    "whyColA": [
+      "Jij past je proces aan de software aan",
+      "Betaal voor functies die je nooit gebruikt",
+      "Een helpdesk die je niet kent",
+      "Vendor lock-in en verborgen limieten",
+      "Zwarte doos — je ziet niet wat er gebeurt"
+    ],
+    "whyColB": [
+      "Software past zich aan jouw proces aan en helpt actief in verbeteren, versnellen en automatiseren.",
+      "Alleen wat je nodig hebt, niets meer",
+      "Eén vast team dat je bij naam kent",
+      "Jij bent eigenaar van code én data",
+      "Transparant — je kijkt continu mee"
+    ],
+    "capEyebrow": "01 / Capaciteiten",
+    "capH2": "We bouwen wat nog niet bestaat.",
+    "capLead": "Geen standaardpakketten, geen concessies. Eén team dat de volledige stack beheerst — van fundament tot autonome agent — en dat bij je blijft.",
+    "capTags": [
+      "Persoonlijke aandacht",
+      "Stabiliteit",
+      "Onderhoudbaarheid",
+      "Betrouwbaarheid"
+    ],
+    "capRows": [
+      {
+        "label": "Backend",
+        "lines": [
+          "Python · PHP · Node",
+          "Java or Kotlin · Go · C++ · Rust"
+        ]
+      },
+      {
+        "label": "Frontend",
+        "lines": [
+          "React or Next · Vue or Nuxt",
+          "PWA · Web Components · WASM",
+          "React Native or Expo · iOS · Android"
+        ]
+      },
+      {
+        "label": "AI & ML",
+        "lines": [
+          "LLM's · RAG · Generative AI",
+          "fine-tuning · eigen modellen"
+        ]
+      },
+      {
+        "label": "Agents",
+        "lines": [
+          "workflows · tool-use · orchestratie"
+        ]
+      },
+      {
+        "label": "Cloud & infra",
+        "lines": [
+          "Fly.io · Render · Railway · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD"
+        ]
+      },
+      {
+        "label": "Data",
+        "lines": [
+          "pipelines · integraties · dashboards",
+          "MySQL · PostgreSQL · Supabase"
+        ]
+      }
+    ],
+    "svEyebrow": "02 / Diensten",
+    "svH2": "Wat we doen.",
+    "svCards": [
+      {
+        "level": "Level 01",
+        "title": "Procesoptimalisatie",
+        "desc": "We brengen je processen in kaart en halen de ruis eruit — voordat we iets bouwen.",
+        "meta": "Analyse · Workflows · Automatisering"
+      },
+      {
+        "level": "Level 02",
+        "title": "Ontwerp & architectuur",
+        "desc": "Een fundament dat meegroeit — doordacht, ontworpen op stabiliteit, niet op haast.",
+        "meta": "Systeemontwerp · Roadmap · UX"
+      },
+      {
+        "level": "Level 03",
+        "title": "Maatwerk software",
+        "desc": "Applicaties, platformen en interne tools — volledig op maat gebouwd rond jouw processen.",
+        "meta": "Native, Web & mobiel · Interne tools · Integraties"
+      },
+      {
+        "level": "Level 04",
+        "title": "AI oplossingen",
+        "desc": "Maatwerk AI die past bij jouw data en processen — geen demo's, maar iets dat productie haalt.",
+        "meta": "LLM-toepassingen · RAG · Eigen modellen"
+      },
+      {
+        "level": "Level 05",
+        "title": "Autonome agents",
+        "desc": "Agents die werk voor jou uit handen nemen — betrouwbaar, controleerbaar en met de mens aan het roer.",
+        "meta": "Workflows · Tool-use · Orchestratie"
+      },
+      {
+        "level": "Level 0A",
+        "title": "Advies",
+        "desc": "Meedenken over de juiste keuzes — onafhankelijk en objectief.",
+        "meta": "Second opinion · Strategie · Begeleiding"
+      }
+    ],
+    "wpEyebrow": "03 / Werkwijze",
+    "wpH2": "Persoonlijk — van eerste gesprek tot jarenlang onderhoud.",
+    "wpStepWord": "stap",
+    "wpSteps": [
+      {
+        "n": "01",
+        "title": "Kennismaking",
+        "desc": "Een korte call. Wie zijn jullie en wat is jullie visie? We voelen of we een match zijn."
+      },
+      {
+        "n": "02",
+        "title": "Brainstormen",
+        "desc": "Een langer overleg. Welke problemen of bottlenecks ervaren jullie — en wat vermoed je te willen automatiseren?"
+      },
+      {
+        "n": "03",
+        "title": "Op de koffie",
+        "desc": "Een rondleiding van het huis. Neem ons mee in jullie bedrijf — hier inventariseren we het volledige huidige proces."
+      },
+      {
+        "n": "04",
+        "title": "Ontwerp & architectuur",
+        "desc": "We optimaliseren dat proces en ontwerpen de software die deze optimalisatie ondersteunt."
+      },
+      {
+        "n": "05",
+        "title": "Bouw",
+        "desc": "Maatwerk, test-driven & AI-driven ontwikkeling — in korte, zichtbare iteraties. Built for the long haul."
+      },
+      {
+        "n": "06",
+        "title": "Onderhoud & doorontwikkeling",
+        "desc": "We blijven betrokken. Onderhoudbaarheid en bruikbaarheid staan centraal — ook na oplevering."
+      }
+    ],
+    "abEyebrow": "04 / Over ons",
+    "abH2": "Klein team, volledige toewijding.",
+    "abParas": [
+      "Everware is een Nederlands maatwerk-softwarebureau. Wij bouwen software, AI-oplossingen en autonome agents die aansluiten op jouw processen en tools — geen standaardpakketten, geen concessies.",
+      "We werken met een klein team waarbij persoonlijke aandacht voorop staat. Van het eerste gesprek tot jarenlang onderhoud. We bouwen met als doel stabiliteit en onderhoudbaarheid, zodat wat we maken jarenlang meegaat."
+    ],
+    "abRows": [
+      {
+        "label": "Werkgebied",
+        "lines": [
+          "Nederland · remote-first · op locatie"
+        ]
+      },
+      {
+        "label": "Focus",
+        "lines": [
+          "maatwerk software · AI · agents",
+          "procesautomatisering"
+        ]
+      },
+      {
+        "label": "Aanpak",
+        "lines": [
+          "persoonlijk · langdurig betrokken"
+        ]
+      }
+    ],
+    "abTelLabel": "Telefoon",
+    "abEmailLabel": "E-mail",
+    "faqEyebrow": "06 / Veelgestelde vragen",
+    "faqH2": "Veelgestelde vragen.",
+    "faqItems": [
+      {
+        "q": "Wat doet Everware precies?",
+        "a": "We bouwen maatwerk software, AI-oplossingen en autonome agents. Van het optimaliseren van je processen tot het ontwerpen, bouwen en onderhouden van de software eromheen — alles onder één dak."
+      },
+      {
+        "q": "Werken jullie met vaste pakketten?",
+        "a": "Nee en ja. Alles wat we maken is op maat gebouwd rond jouw processen. We beginnen bij het probleem, niet bij een kant-en-klaar product. In veel gevallen kunnen we echter wel aansluiten op bestaande software, indien gewenst."
+      },
+      {
+        "q": "Voor wie werken jullie?",
+        "a": "Voor organisaties die tegen de grenzen van standaardsoftware aanlopen en iets nodig hebben dat echt aansluit op hun manier van werken."
+      },
+      {
+        "q": "Welke technologieën gebruiken jullie?",
+        "a": "De volledige stack — van Python, PHP, Node, Java, Go, C++ en Rust tot React en Vue, met LLM's, RAG en keuze in elk AI model. We kiezen wat past bij jouw situatie."
+      },
+      {
+        "q": "Blijven jullie betrokken na oplevering?",
+        "a": "Ja. Onderhoud en doorontwikkeling horen erbij. We blijven betrokken zodat je software betrouwbaar blijft en met je meegroeit."
+      },
+      {
+        "q": "Wat kost een traject?",
+        "a": "Dat hangt af van wat je wilt bouwen. Na een vrijblijvend kennismakingsgesprek geven we een helder beeld van scope en investering."
+      }
+    ],
+    "ctH2": "Klaar voor maatwerk?",
+    "ctLead": "Laten we vrijblijvend kennismaken. Bellen of mailen kost niets!",
+    "ctNaam": "Naam",
+    "ctNaamPh": "Jouw naam",
+    "ctEmail": "E-mail",
+    "ctEmailPh": "jij@bedrijf.nl",
+    "ctBedrijf": "Bedrijf",
+    "ctBedrijfOpt": "— optioneel",
+    "ctBedrijfPh": "Bedrijfsnaam",
+    "ctIdea": "Wat heb je in gedachten?",
+    "ctIdeaPh": "Neem ons mee!",
+    "ctSubmit": "Verstuur bericht →",
+    "ctOrPre": "of mail",
+    "ctOrMid": "of bel",
+    "ctAvg": "Door te versturen ga je akkoord dat we contact met je opnemen over je aanvraag. Geen nieuwsbrief, geen spam.",
+    "ctErr": "Versturen mislukt. Probeer het opnieuw of mail ons direct.",
+    "ctSentTag": "// verzonden",
+    "ctSentTitle": "Bedankt voor je bericht.",
+    "ctSentBody": "We nemen binnen één werkdag persoonlijk contact met je op.",
+    "ctAgain": "Nog een bericht sturen",
+    "ftTagline": "Maatwerk software, AI & autonome agents — built to last.",
+    "ftContactHd": "Contact",
+    "ftNavHd": "Navigatie",
+    "ftCopyLeft": "© 2026 Everware · Nederland",
+    "ftCopyRight": "Custom software, AI & agents",
+    "navAria": "Hoofdnavigatie"
+  },
+  "en": {
+    "nav": [
+      {
+        "id": "capaciteiten",
+        "label": "Capabilities"
+      },
+      {
+        "id": "diensten",
+        "label": "Services"
+      },
+      {
+        "id": "werkwijze",
+        "label": "Process"
+      },
+      {
+        "id": "over-ons",
+        "label": "About"
+      },
+      {
+        "id": "waarom",
+        "label": "Why"
+      },
+      {
+        "id": "faq",
+        "label": "FAQ"
+      },
+      {
+        "id": "contact",
+        "label": "Contact"
+      }
+    ],
+    "words": [
+      "AI",
+      "Software",
+      "Agents",
+      "Automation",
+      "Advice",
+      "Processes",
+      "Solutions",
+      "Architecture",
+      "Data"
+    ],
+    "title": "Everware — Custom software, AI & autonomous agents",
+    "metaDesc": "Everware — Dutch custom software agency. Bespoke software, AI solutions and autonomous agents, with personal attention.",
+    "ogDesc": "From first conversation to autonomous agents. We build bespoke — with personal attention, stability and maintainability.",
+    "heroEyebrow": "~/everware — Custom software",
+    "heroTitleWord": "Custom",
+    "heroDesc": "From first conversation to autonomous agents. We build bespoke — with personal attention.",
+    "heroCta1": "Book a call",
+    "heroCta2": "View our process →",
+    "heroIndex": [
+      {
+        "n": "01",
+        "label": "Process optimization"
+      },
+      {
+        "n": "02",
+        "label": "Design & architecture"
+      },
+      {
+        "n": "03",
+        "label": "Custom software"
+      },
+      {
+        "n": "04",
+        "label": "AI solutions"
+      },
+      {
+        "n": "05",
+        "label": "Autonomous agents"
+      },
+      {
+        "n": "0A",
+        "label": "Advisory"
+      }
+    ],
+    "status": [
+      "Personal attention",
+      "Stability",
+      "Maintainability",
+      "Reliability"
+    ],
+    "whyEyebrow": "05 / Why Everware",
+    "whyH2": "Off-the-shelf software forces your process. We improve your process.",
+    "whyLead": "Most tools are built for the average customer — nothing about you is average! We start with your process and build around it.",
+    "whyColATitle": "Off the shelf",
+    "whyColBTitle": "Everware custom",
+    "whyColA": [
+      "You bend your process to fit the software",
+      "Pay for features you never use",
+      "A helpdesk that doesn't know you",
+      "Vendor lock-in and hidden limits",
+      "A black box — you can't see what happens"
+    ],
+    "whyColB": [
+      "Software adapts to your process and actively helps you improve, accelerate and automate.",
+      "Only what you need, nothing more",
+      "One fixed team that knows you by name",
+      "You own the code and the data",
+      "Transparent — you follow along continuously"
+    ],
+    "capEyebrow": "01 / Capabilities",
+    "capH2": "We build what doesn't exist yet.",
+    "capLead": "No standard packages, no compromises. One team that masters the full stack — from foundation to autonomous agent — and stays with you.",
+    "capTags": [
+      "Personal attention",
+      "Stability",
+      "Maintainability",
+      "Reliability"
+    ],
+    "capRows": [
+      {
+        "label": "Backend",
+        "lines": [
+          "Python · PHP · Node",
+          "Java or Kotlin · Go · C++ · Rust"
+        ]
+      },
+      {
+        "label": "Frontend",
+        "lines": [
+          "React or Next · Vue or Nuxt",
+          "PWA · Web Components · WASM",
+          "React Native or Expo · iOS · Android"
+        ]
+      },
+      {
+        "label": "AI & ML",
+        "lines": [
+          "LLM's · RAG · Generative AI",
+          "fine-tuning · custom models"
+        ]
+      },
+      {
+        "label": "Agents",
+        "lines": [
+          "workflows · tool-use · orchestration"
+        ]
+      },
+      {
+        "label": "Cloud & infra",
+        "lines": [
+          "Fly.io · Render · Railway · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD"
+        ]
+      },
+      {
+        "label": "Data",
+        "lines": [
+          "pipelines · integrations · dashboards",
+          "MySQL · PostgreSQL · Supabase"
+        ]
+      }
+    ],
+    "svEyebrow": "02 / Services",
+    "svH2": "What we do.",
+    "svCards": [
+      {
+        "level": "Level 01",
+        "title": "Process optimization",
+        "desc": "We map your processes and strip out the noise — before we build anything.",
+        "meta": "Analysis · Workflows · Automation"
+      },
+      {
+        "level": "Level 02",
+        "title": "Design & architecture",
+        "desc": "A foundation that grows with you — considered, designed for stability, not for haste.",
+        "meta": "System design · Roadmap · UX"
+      },
+      {
+        "level": "Level 03",
+        "title": "Custom software",
+        "desc": "Applications, platforms and internal tools — fully built around your processes.",
+        "meta": "Native, web & mobile · Internal tools · Integrations"
+      },
+      {
+        "level": "Level 04",
+        "title": "AI solutions",
+        "desc": "Custom AI that fits your data and processes — no demos, but something that reaches production.",
+        "meta": "LLM applications · RAG · Custom models"
+      },
+      {
+        "level": "Level 05",
+        "title": "Autonomous agents",
+        "desc": "Agents that take work off your hands — reliable, controllable, with a human at the helm.",
+        "meta": "Workflows · Tool-use · Orchestration"
+      },
+      {
+        "level": "Level 0A",
+        "title": "Advisory",
+        "desc": "Thinking along about the right choices — independent and objective.",
+        "meta": "Second opinion · Strategy · Guidance"
+      }
+    ],
+    "wpEyebrow": "03 / Process",
+    "wpH2": "Personal — from first conversation to years of maintenance.",
+    "wpStepWord": "step",
+    "wpSteps": [
+      {
+        "n": "01",
+        "title": "Introduction",
+        "desc": "A short call. Who are you and what's your vision? We sense whether we're a match."
+      },
+      {
+        "n": "02",
+        "title": "Brainstorm",
+        "desc": "A longer session. Which problems or bottlenecks do you face — and what do you suspect you want to automate?"
+      },
+      {
+        "n": "03",
+        "title": "Over coffee",
+        "desc": "A tour of the house. Take us through your business — here we inventory the full current process."
+      },
+      {
+        "n": "04",
+        "title": "Design & architecture",
+        "desc": "We optimize that process and design the software that supports the optimization."
+      },
+      {
+        "n": "05",
+        "title": "Build",
+        "desc": "Custom, test-driven & AI-driven development — in short, visible iterations. Built for the long haul."
+      },
+      {
+        "n": "06",
+        "title": "Maintenance & evolution",
+        "desc": "We stay involved. Maintainability and usability remain central — even after delivery."
+      }
+    ],
+    "abEyebrow": "04 / About",
+    "abH2": "Small team, full commitment.",
+    "abParas": [
+      "Everware is a Dutch custom software agency. We build software, AI solutions and autonomous agents that fit your processes and tools — no standard packages, no compromises.",
+      "We work with a small team where personal attention comes first. From the first conversation to years of maintenance. We build with stability and maintainability in mind, so what we make lasts for years."
+    ],
+    "abRows": [
+      {
+        "label": "Service area",
+        "lines": [
+          "Netherlands · remote-first · on-site"
+        ]
+      },
+      {
+        "label": "Focus",
+        "lines": [
+          "custom software · AI · agents",
+          "process automation"
+        ]
+      },
+      {
+        "label": "Approach",
+        "lines": [
+          "personal · long-term involved"
+        ]
+      }
+    ],
+    "abTelLabel": "Phone",
+    "abEmailLabel": "Email",
+    "faqEyebrow": "06 / Frequently asked",
+    "faqH2": "Frequently asked questions.",
+    "faqItems": [
+      {
+        "q": "What exactly does Everware do?",
+        "a": "We build custom software, AI solutions and autonomous agents. From optimizing your processes to designing, building and maintaining the software around them — all under one roof."
+      },
+      {
+        "q": "Do you work with fixed packages?",
+        "a": "No and yes. Everything we make is built to measure around your processes. We start with the problem, not a ready-made product. In many cases we can, however, connect to existing software if desired."
+      },
+      {
+        "q": "Who do you work for?",
+        "a": "For organizations that hit the limits of standard software and need something that truly fits the way they work."
+      },
+      {
+        "q": "Which technologies do you use?",
+        "a": "The full stack — from Python, PHP, Node, Java, Go, C++ and Rust to React and Vue, with LLMs, RAG and a choice of any AI model. We pick what fits your situation."
+      },
+      {
+        "q": "Do you stay involved after delivery?",
+        "a": "Yes. Maintenance and further development are part of it. We stay involved so your software stays reliable and grows with you."
+      },
+      {
+        "q": "What does a project cost?",
+        "a": "That depends on what you want to build. After a no-obligation introductory call we give a clear picture of scope and investment."
+      }
+    ],
+    "ctH2": "Ready for custom software?",
+    "ctLead": "Let's have a no-obligation chat. Calling or emailing costs nothing!",
+    "ctNaam": "Name",
+    "ctNaamPh": "Your name",
+    "ctEmail": "Email",
+    "ctEmailPh": "you@company.com",
+    "ctBedrijf": "Company",
+    "ctBedrijfOpt": "— optional",
+    "ctBedrijfPh": "Company name",
+    "ctIdea": "What do you have in mind?",
+    "ctIdeaPh": "Take us along!",
+    "ctSubmit": "Send message →",
+    "ctOrPre": "or email",
+    "ctOrMid": "or call",
+    "ctAvg": "By sending this you agree we may contact you about your request. No newsletter, no spam.",
+    "ctErr": "Sending failed. Please try again or email us directly.",
+    "ctSentTag": "// sent",
+    "ctSentTitle": "Thanks for your message.",
+    "ctSentBody": "We'll get back to you personally within one business day.",
+    "ctAgain": "Send another message",
+    "ftTagline": "Custom software, AI & autonomous agents — built to last.",
+    "ftContactHd": "Contact",
+    "ftNavHd": "Navigation",
+    "ftCopyLeft": "© 2026 Everware · Netherlands",
+    "ftCopyRight": "Custom software, AI & agents",
+    "navAria": "Main navigation"
+  }
+}
