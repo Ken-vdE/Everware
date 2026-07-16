@@ -88,10 +88,11 @@ independently indexable page at `/en/`:
 
 ### Domain
 
-`https://everware.nl` is hardcoded in `server/render.py` (`SITE_URL`),
-`templates/index.html.j2` (hreflang alternates, og-image URLs),
-`public/sitemap.xml` and `public/robots.txt`. Update all four when the
-domain changes.
+The base URL for canonical/og/hreflang links and JSON-LD comes from the
+`SITE_URL` environment variable (default `https://everware.nl`, see
+`.env.example`) — set it on staging to render staging URLs. Still hardcoded:
+`public/sitemap.xml` and `public/robots.txt` (and the contact email
+`hallo@everware.nl` in copy/template). Update those when the domain changes.
 
 ### Structured data & AI indexation
 

@@ -88,3 +88,33 @@ def test_active_language_button_styled_per_page():
     en_page = client.get("/en/").text
     assert re.search(r'id="ew-lang-nl"[^>]*font-weight:600', nl_page)
     assert re.search(r'id="ew-lang-en"[^>]*font-weight:600', en_page)
+
+
+def test_og_image_alt_from_copy():
+    for path_, lang in (("/", "nl"), ("/en/", "en")):
+        page = client.get(path_).text
+        assert f'<meta property="og:image:alt" content="{COPY[lang]["ogImageAlt"]}"' in page
+
+
+def test_site_url_env_override(monkeypatch):
+    from server import render
+
+    monkeypatch.setenv("SITE_URL", "https://staging.everware.nl")
+    try:
+        render.render_pages()
+        for out, canonical in (
+            (render.PUBLIC / "index.html", "https://staging.everware.nl/"),
+            (render.PUBLIC / "en" / "index.html", "https://staging.everware.nl/en/"),
+        ):
+            html = out.read_text(encoding="utf-8")
+            assert f'<link rel="canonical" href="{canonical}">' in html
+            assert 'content="https://staging.everware.nl/assets/og-image.png"' in html
+            assert '<link rel="alternate" hreflang="nl" href="https://staging.everware.nl/">' in html
+            # no prod URL may survive in links/metas (mailto/tel text is fine)
+            assert 'href="https://everware.nl' not in html
+            assert 'content="https://everware.nl' not in html
+            assert '"https://staging.everware.nl/#org"' in html  # JSON-LD follows too
+    finally:
+        # restore prod-rendered pages for the rest of the suite
+        monkeypatch.delenv("SITE_URL", raising=False)
+        render.render_pages()

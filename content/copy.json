@@ -309,7 +309,8 @@
     "ftNavHd": "Navigatie",
     "ftCopyLeft": "© 2026 Everware · Nederland",
     "ftCopyRight": "Custom software, AI & agents",
-    "navAria": "Hoofdnavigatie"
+    "navAria": "Hoofdnavigatie",
+    "ogImageAlt": "Everware — Software · AI · Agents"
   },
   "en": {
     "nav": [
@@ -621,6 +622,7 @@
     "ftNavHd": "Navigation",
     "ftCopyLeft": "© 2026 Everware · Netherlands",
     "ftCopyRight": "Custom software, AI & agents",
-    "navAria": "Main navigation"
+    "navAria": "Main navigation",
+    "ogImageAlt": "Everware — Software · AI · Agents"
   }
 }
