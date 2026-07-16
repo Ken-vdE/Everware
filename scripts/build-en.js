@@ -7,7 +7,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const ROOT = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '../public');
 const SITE_URL = 'https://everware.nl';
 
 const js = fs.readFileSync(path.join(ROOT, 'assets/main.js'), 'utf8');

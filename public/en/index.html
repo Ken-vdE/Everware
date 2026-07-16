@@ -536,10 +536,11 @@
       <p style="max-width:540px;margin:30px auto 0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.6)" data-t="ctLead">Let's have a no-obligation chat. Calling or emailing costs nothing!</p>
       <div style="max-width:640px;margin:46px auto 0;text-align:left">
         <form id="ew-form" style="display:grid;gap:20px">
+          <input type="text" name="website" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:0;height:0;opacity:0">
           <div class="ew-form2" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
             <label style="display:block">
               <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:9px" data-t="ctNaam">Name</span>
-              <input class="ew-input" type="text" name="name" required placeholder="Your name" data-t-ph="ctNaamPh" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;outline:none">
+              <input class="ew-input" type="text" name="name" required minlength="2" placeholder="Your name" data-t-ph="ctNaamPh" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;outline:none">
             </label>
             <label style="display:block">
               <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:9px" data-t="ctEmail">Email</span>
@@ -552,12 +553,13 @@
           </label>
           <label style="display:block">
             <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:9px" data-t="ctIdea">What do you have in mind?</span>
-            <textarea class="ew-input" name="message" required rows="4" placeholder="Take us along!" data-t-ph="ctIdeaPh" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.5;outline:none;resize:vertical"></textarea>
+            <textarea class="ew-input" name="message" required minlength="10" rows="4" placeholder="Take us along!" data-t-ph="ctIdeaPh" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.5;outline:none;resize:vertical"></textarea>
           </label>
           <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:4px">
             <button type="submit" style="border:none;cursor:pointer;background:var(--accent,#3B82F6);color:#fff;font-weight:600;font-size:15px;font-family:'Space Grotesk',sans-serif;padding:15px 30px;border-radius:999px;box-shadow:0 0 30px color-mix(in srgb,var(--accent,#3B82F6) 45%,transparent)" data-t="ctSubmit">Send message →</button>
             <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:rgba(255,255,255,.45)"><span data-t="ctOrPre">or email</span> <a href="mailto:hallo@everware.nl" style="color:var(--accent,#3B82F6);text-decoration:none">hallo@everware.nl</a> <span data-t="ctOrMid">or call</span> <a href="tel:+31612345678" style="color:var(--accent,#3B82F6);text-decoration:none">+31 6 12345678</a></span>
           </div>
+          <p id="ew-form-err" role="alert" style="display:none;margin:0;font-size:14px;color:#f87171" data-t="ctErr">Sending failed. Please try again or email us directly.</p>
           <p style="margin:2px 0 0;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.35)" data-t="ctAvg">By sending this you agree we may contact you about your request. No newsletter, no spam.</p>
         </form>
         <div id="ew-sent" style="display:none;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03);border-radius:16px;padding:48px 40px;text-align:center">

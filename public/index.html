@@ -338,7 +338,7 @@
         </div>
         <div style="border-top:1px solid rgba(0,0,0,.16);padding:20px 0;display:flex;justify-content:space-between;gap:24px">
           <span style="font-size:15px;font-weight:500;font-family:'Space Grotesk',sans-serif" data-t="capRows.4.label">Cloud &amp; infra</span>
-          <span style="font-size:12.5px;color:rgba(0,0,0,.5);text-align:right"><span style="display:block" data-t="capRows.4.lines.0">Railway · Fly.io · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD</span></span>
+          <span style="font-size:12.5px;color:rgba(0,0,0,.5);text-align:right"><span style="display:block" data-t="capRows.4.lines.0">Fly.io · Render · Railway · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD</span></span>
         </div>
         <div style="border-top:1px solid rgba(0,0,0,.16);padding:20px 0;display:flex;justify-content:space-between;gap:24px">
           <span style="font-size:15px;font-weight:500;font-family:'Space Grotesk',sans-serif" data-t="capRows.5.label">Data</span>
@@ -536,10 +536,11 @@
       <p style="max-width:540px;margin:30px auto 0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.6)" data-t="ctLead">Laten we vrijblijvend kennismaken. Bellen of mailen kost niets!</p>
       <div style="max-width:640px;margin:46px auto 0;text-align:left">
         <form id="ew-form" style="display:grid;gap:20px">
+          <input type="text" name="website" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:0;height:0;opacity:0">
           <div class="ew-form2" style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
             <label style="display:block">
               <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:9px" data-t="ctNaam">Naam</span>
-              <input class="ew-input" type="text" name="name" required placeholder="Jouw naam" data-t-ph="ctNaamPh" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;outline:none">
+              <input class="ew-input" type="text" name="name" required minlength="2" placeholder="Jouw naam" data-t-ph="ctNaamPh" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;outline:none">
             </label>
             <label style="display:block">
               <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:9px" data-t="ctEmail">E-mail</span>
@@ -552,12 +553,13 @@
           </label>
           <label style="display:block">
             <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:9px" data-t="ctIdea">Wat heb je in gedachten?</span>
-            <textarea class="ew-input" name="message" required rows="4" placeholder="Neem ons mee!" data-t-ph="ctIdeaPh" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.5;outline:none;resize:vertical"></textarea>
+            <textarea class="ew-input" name="message" required minlength="10" rows="4" placeholder="Neem ons mee!" data-t-ph="ctIdeaPh" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.5;outline:none;resize:vertical"></textarea>
           </label>
           <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:4px">
             <button type="submit" style="border:none;cursor:pointer;background:var(--accent,#3B82F6);color:#fff;font-weight:600;font-size:15px;font-family:'Space Grotesk',sans-serif;padding:15px 30px;border-radius:999px;box-shadow:0 0 30px color-mix(in srgb,var(--accent,#3B82F6) 45%,transparent)" data-t="ctSubmit">Verstuur bericht →</button>
             <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:rgba(255,255,255,.45)"><span data-t="ctOrPre">of mail</span> <a href="mailto:hallo@everware.nl" style="color:var(--accent,#3B82F6);text-decoration:none">hallo@everware.nl</a> <span data-t="ctOrMid">of bel</span> <a href="tel:+31612345678" style="color:var(--accent,#3B82F6);text-decoration:none">+31 6 12345678</a></span>
           </div>
+          <p id="ew-form-err" role="alert" style="display:none;margin:0;font-size:14px;color:#f87171" data-t="ctErr">Versturen mislukt. Probeer het opnieuw of mail ons direct.</p>
           <p style="margin:2px 0 0;font-family:'JetBrains Mono',monospace;font-size:11.5px;line-height:1.5;color:rgba(255,255,255,.35)" data-t="ctAvg">Door te versturen ga je akkoord dat we contact met je opnemen over je aanvraag. Geen nieuwsbrief, geen spam.</p>
         </form>
         <div id="ew-sent" style="display:none;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.03);border-radius:16px;padding:48px 40px;text-align:center">
