@@ -74,6 +74,12 @@
   // ---- FLIP animation: title/group glide when the hero line reflows ----
   const flipPos = {};
 
+  // Webfont swap moves the hero after the initial baseline capture; forget
+  // stale positions so the first keystroke doesn't animate the font delta.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => { delete flipPos.title; delete flipPos.group; });
+  }
+
   function flipAll() {
     flipEl(groupEl, 'group');
     flipEl(titleEl, 'title');
