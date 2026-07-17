@@ -11,7 +11,6 @@
 
   const headerEl = document.getElementById('ew-header');
   const heroEl = document.getElementById('ew-hero');
-  const webEl = document.getElementById('ew-web');
   const typedEl = document.getElementById('ew-typed');
   const titleEl = document.getElementById('ew-title');
   const groupEl = document.getElementById('ew-group');
@@ -19,13 +18,6 @@
   const formEl = document.getElementById('ew-form');
   const sentEl = document.getElementById('ew-sent');
   const againBtn = document.getElementById('ew-again');
-
-  function accentRGB() {
-    let hex = CONFIG.accentColor.replace('#', '');
-    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-    const n = parseInt(hex, 16) || 0;
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-  }
 
   // ---- i18n ----
   // All strings are baked into the page server-side; the only language-
@@ -173,89 +165,45 @@
     requestAnimationFrame(glowTick);
   }
 
-  // ---- hero pointer web canvas ----
-  function startWeb() {
-    if (!webEl || !heroEl || reduceMotion) return;
-    const ctx = webEl.getContext('2d');
-    const dots = new Map();
-    const pointer = { x: 0, y: 0, active: false };
-    let lastMove = performance.now();
-    let lastT = performance.now();
-    let growth = 0;
+  // ---- hero galaxy (Spline) ----
+  // Replaces the old pointer canvas with an interactive 3D galaxy, but only on
+  // capable viewports: reduced-motion and phones keep the dot-grid fallback and
+  // never download the ~2 MB WebGL runtime. The viewer bundle is self-hosted in
+  // assets/spline/ (no third-party CDN at page load).
+  function startSpline() {
+    const viewer = document.getElementById('ew-spline');
+    if (!viewer || !heroEl || reduceMotion) return;
+    if (!window.matchMedia('(min-width: 861px)').matches) return; // phones keep the dot grid
 
-    const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      webEl.width = Math.round(heroEl.clientWidth * dpr);
-      webEl.height = Math.round(heroEl.clientHeight * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // main.js and the viewer bundle share the assets/ dir; derive the URL from
+    // this script's own src so it resolves for both / and /en/.
+    const self = document.querySelector('script[src$="main.js"]');
+    const src = new URL('spline/spline-viewer.js', self ? self.src : location.href).href;
+
+    let revealed = false;
+    const reveal = () => {
+      if (revealed) return;
+      revealed = true;
+      heroEl.classList.add('ew-spline-active'); // fades in the galaxy, hides the dot grid
     };
-    resize();
-    if (window.ResizeObserver) new ResizeObserver(resize).observe(heroEl);
+    // Note: this community scene bakes the "Built with Spline" badge into the
+    // WebGL render (logoOverlayPass), not the DOM — it can't be removed here.
+    // Removing it requires publishing the scene from a paid Spline plan.
 
-    window.addEventListener('mousemove', (e) => {
-      const r = heroEl.getBoundingClientRect();
-      const x = e.clientX - r.left, y = e.clientY - r.top;
-      const inside = x >= 0 && y >= 0 && x <= r.width && y <= r.height;
-      if (inside) {
-        if (Math.hypot(x - pointer.x, y - pointer.y) > 2.5) lastMove = performance.now();
-        pointer.x = x; pointer.y = y; pointer.active = true;
-      } else pointer.active = false;
-    }, { passive: true });
-    window.addEventListener('mouseout', () => { pointer.active = false; }, { passive: true });
-
-    const webTick = () => {
-      const now = performance.now();
-      const dt = Math.min(0.05, (now - lastT) / 1000);
-      lastT = now;
-      const w = heroEl.clientWidth, h = heroEl.clientHeight;
-      ctx.clearRect(0, 0, w, h);
-      const [r, g, b] = accentRGB();
-      const moving = (now - lastMove) < 90;
-      const target = pointer.active ? (moving ? 0.06 : 1) : 0;
-      const k = target > growth ? 0.85 : (pointer.active ? 0.9 : 2.2);
-      growth += (target - growth) * Math.min(1, dt * k);
-      const R = 66 + growth * 270;
-      const GS = 28, OFF = 14;
-      if (pointer.active) {
-        const { x, y } = pointer;
-        const i0 = Math.floor((x - R - OFF) / GS), i1 = Math.ceil((x + R - OFF) / GS);
-        const j0 = Math.floor((y - R - OFF) / GS), j1 = Math.ceil((y + R - OFF) / GS);
-        for (let i = i0; i <= i1; i++) for (let j = j0; j <= j1; j++) {
-          const dx = OFF + GS * i, dy = OFF + GS * j;
-          if (dx < 0 || dy < 0 || dx > w || dy > h) continue;
-          const dist = Math.hypot(dx - x, dy - y);
-          if (dist > R) continue;
-          const key = i + ',' + j;
-          let d = dots.get(key);
-          if (!d) { d = { x: dx, y: dy, s: 0, ex: x, ey: y, p: 0 }; dots.set(key, d); }
-          const p = 1 - dist / R;
-          d.s = Math.max(d.s, Math.min(1, d.s + dt * 3.2 * p, p));
-          d.ex = x; d.ey = y; d.p = p; d._live = true;
-        }
-      }
-      ctx.lineWidth = 1;
-      for (const [key, d] of dots) {
-        const isLive = d._live;
-        d._live = false;
-        if (!isLive) d.s -= dt * 0.85;
-        if (d.s <= 0.012) { dots.delete(key); continue; }
-        const prox = 0.4 + 0.6 * (d.p || 0.4);
-        const a = d.s * prox * (isLive ? (0.055 + 0.15 * growth) : 0.03);
-        ctx.strokeStyle = `rgba(${r},${g},${b},${a})`;
-        ctx.beginPath(); ctx.moveTo(d.ex, d.ey); ctx.lineTo(d.x, d.y); ctx.stroke();
-        ctx.fillStyle = `rgba(${r},${g},${b},${Math.min(0.75, a * 1.6)})`;
-        ctx.beginPath(); ctx.arc(d.x, d.y, isLive ? 1.8 : 1.3, 0, 6.2832); ctx.fill();
-      }
-      if (pointer.active) {
-        const ca = 0.22 + 0.5 * growth;
-        ctx.fillStyle = `rgba(${r},${g},${b},${ca})`;
-        ctx.beginPath(); ctx.arc(pointer.x, pointer.y, 2.4, 0, 6.2832); ctx.fill();
-        ctx.strokeStyle = `rgba(${r},${g},${b},${ca * 0.4})`;
-        ctx.beginPath(); ctx.arc(pointer.x, pointer.y, 7 + growth * 6, 0, 6.2832); ctx.stroke();
-      }
-      requestAnimationFrame(webTick);
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = src;
+    script.onload = () => {
+      // Reveal once the scene is ready. Listen for both the public and runtime
+      // events; as a backstop, reveal after 6 s only if a canvas actually
+      // rendered, so a failed load leaves the dot-grid fallback in place.
+      viewer.addEventListener('load', reveal);
+      viewer.addEventListener('load-complete', reveal);
+      setTimeout(() => {
+        if (viewer.shadowRoot && viewer.shadowRoot.querySelector('canvas')) reveal();
+      }, 6000);
     };
-    requestAnimationFrame(webTick);
+    document.head.appendChild(script);
   }
 
   // ---- contact form ----
@@ -368,7 +316,7 @@
   startTyping();
   updateHeader();
   startGlows();
-  startWeb();
+  startSpline();
   startTimeline();
   startFaq();
 })();
