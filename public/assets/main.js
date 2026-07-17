@@ -180,11 +180,47 @@
     const self = document.querySelector('script[src$="main.js"]');
     const src = new URL('spline/spline-viewer.js', self ? self.src : location.href).href;
 
+    // Paint a static starfield across the whole hero so the scene's centred
+    // star-box isn't ringed by empty black. Drawn once (+ on resize) — no rAF,
+    // so no per-frame cost. Sits under the galaxy; denser scene stars overlay it.
+    const drawStarfield = () => {
+      const cv = document.getElementById('ew-stars');
+      if (!cv) return;
+      const ctx = cv.getContext('2d');
+      const paint = () => {
+        const dpr = window.devicePixelRatio || 1;
+        const w = heroEl.clientWidth, h = heroEl.clientHeight;
+        cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        // Evenly scattered across the whole hero (fills the edges the scene
+        // leaves black). Kept small so they don't compete with the galaxy.
+        const n = Math.round(w * h / 520);
+        for (let i = 0; i < n; i++) {
+          const x = Math.random() * w, y = Math.random() * h;
+          const r = Math.random() < 0.9 ? 0.35 + Math.random() * 0.5 : 0.85 + Math.random() * 0.5;
+          const a = 0.12 + Math.random() * 0.5;
+          // match the galaxy palette: white → light-blue → blue → purple → magenta
+          const roll = Math.random();
+          const c = roll < 0.42 ? '214,226,255'
+                  : roll < 0.66 ? '147,197,253'
+                  : roll < 0.82 ? '96,165,250'
+                  : roll < 0.93 ? '168,85,247'
+                  : '232,121,249';
+          ctx.fillStyle = `rgba(${c},${a})`;
+          ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+        }
+      };
+      paint();
+      window.addEventListener('resize', paint, { passive: true });
+    };
+
     let revealed = false;
     const reveal = () => {
       if (revealed) return;
       revealed = true;
       heroEl.classList.add('ew-spline-active'); // fades in the galaxy, hides the dot grid
+      drawStarfield();
     };
     // The scene renders at its native resolution (no up-scaling — that blurs it).
     // Note: the "Built with Spline" badge is baked into the WebGL render, not the
