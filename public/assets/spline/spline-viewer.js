@@ -8359,7 +8359,7 @@ onmessage = function(messageEvent) {
 			display: block;
 			width: 20px;
 			height: 20px;
-			background-image: url(https://app.spline.design/_assets/_icons/icon_favicon32x32.png);
+			background-image: url(/assets/spline/icon_favicon32x32.png);
 			background-size: cover;
 		}
 		#logo svg {

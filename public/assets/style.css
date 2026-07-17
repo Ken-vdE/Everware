@@ -98,3 +98,7 @@ a{color:inherit}
 .faq-a > div{min-height:0}
 .faq-a p{margin:0;padding:0 40px 26px 2px;font-size:15.5px;line-height:1.6;
   color:rgba(0,0,0,.62);max-width:640px}
+
+#ew-spline #logo {
+  display: none !important;
+}
