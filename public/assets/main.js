@@ -186,9 +186,9 @@
       revealed = true;
       heroEl.classList.add('ew-spline-active'); // fades in the galaxy, hides the dot grid
     };
-    // Note: this community scene bakes the "Built with Spline" badge into the
-    // WebGL render (logoOverlayPass), not the DOM — it can't be removed here.
-    // Removing it requires publishing the scene from a paid Spline plan.
+    // The scene renders at its native resolution (no up-scaling — that blurs it).
+    // Note: the "Built with Spline" badge is baked into the WebGL render, not the
+    // DOM, so it can't be removed here — that needs a paid Spline plan.
 
     const script = document.createElement('script');
     script.type = 'module';
