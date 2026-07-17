@@ -181,12 +181,12 @@
     const src = new URL('spline/spline-viewer.js', self ? self.src : location.href).href;
 
     // Starfield across the whole hero, filling the edges the scene leaves black.
-    // Evenly scattered, small (so they don't compete with the galaxy). It pans
-    // with the click-drag the user passes to Spline: on drag the stars translate
-    // by the same amount, wrapping off-screen stars back in as fresh stars on the
-    // trailing edge — so the field feels part of the same space as the galaxy.
+    // Evenly scattered, small (so they don't compete with the galaxy). It reacts
+    // to the click-drag the user passes to Spline: stars parallax by their depth
+    // (nearer/bigger move more) so the drag reads as motion through 3D space, and
+    // stars leaving the frame wrap back in as fresh ones on the trailing edge.
     // STAR_DRAG scales our movement to the scene's; tune it to match.
-    const STAR_DRAG = 0.1;
+    const STAR_DRAG = 0.05;
     const setupStarfield = () => {
       const cv = document.getElementById('ew-stars');
       if (!cv) return;
@@ -198,9 +198,12 @@
              : r < 0.82 ? '96,165,250' : r < 0.93 ? '168,85,247' : '232,121,249';
       };
       const reroll = (s) => {
-        s.r = Math.random() < 0.9 ? 0.35 + Math.random() * 0.5 : 0.85 + Math.random() * 0.5;
+        s.r = Math.random() < 0.9 ? 0.3 + Math.random() * 0.4 : 0.7 + Math.random() * 0.35;
         s.a = 0.12 + Math.random() * 0.5;
         s.c = pickColor();
+        // Depth cue: nearer (bigger) stars parallax faster than distant (smaller)
+        // ones, so a drag reads as moving through 3D space, not a flat slide.
+        s.m = 0.3 + (s.r - 0.3) * 1.7;
       };
       const draw = () => {
         ctx.clearRect(0, 0, w, h);
@@ -215,7 +218,7 @@
         w = heroEl.clientWidth; h = heroEl.clientHeight;
         cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        const n = Math.round(w * h / 520);
+        const n = Math.round(w * h / 430);
         stars = [];
         for (let i = 0; i < n; i++) {
           const s = { x: Math.random() * w, y: Math.random() * h };
@@ -241,7 +244,7 @@
         if (!dx && !dy) return;
         const sw = w + 2 * M, sh = h + 2 * M;
         for (const s of stars) {
-          s.x += dx; s.y += dy;
+          s.x += dx * s.m; s.y += dy * s.m; // per-star depth → parallax
           if (s.x > w + M) { s.x -= sw; s.y = Math.random() * h; reroll(s); }
           else if (s.x < -M) { s.x += sw; s.y = Math.random() * h; reroll(s); }
           if (s.y > h + M) { s.y -= sh; s.x = Math.random() * w; reroll(s); }
