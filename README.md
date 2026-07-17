@@ -51,9 +51,14 @@ Resend-verified sender; `onboarding@resend.dev` works for testing).
 ```sh
 uv sync                          # once: install dependencies
 cp .env.example .env             # fill in RESEND_API_KEY
-uv run --env-file .env uvicorn server.main:app --reload   # http://localhost:8000
+uv run --env-file .env uvicorn server.main:app --reload \
+  --reload-include '*.json' --reload-include '*.j2'        # http://localhost:8000
 uv run pytest                    # run the test suite
 ```
+
+The `--reload-include` flags make uvicorn watch `content/copy.json` and
+`templates/*.j2` on top of the default `*.py`; editing either restarts the
+server, which reruns `render_pages()` and regenerates both pages.
 
 The contact form degrades cleanly without a key: the API returns 503 and the
 form shows its error line.
@@ -77,14 +82,9 @@ independently indexable page at `/en/`:
 1. Edit the text in `content/copy.json` — both languages live there, side by
    side. Layout/markup changes go in `templates/index.html.j2` instead.
 2. Restart the server (or run `uv run pytest`) — both pages are re-rendered
-   at startup. In dev, uvicorn can watch these files:
-
-   ```sh
-   uv run --env-file .env uvicorn server.main:app --reload \
-     --reload-include '*.json' --reload-include '*.j2'
-   ```
-
-   A key missing in either language makes startup fail with the key name.
+   at startup. The dev command above already watches these files, so a save
+   re-renders both pages automatically. A key missing in either language makes
+   startup fail with the key name.
 
 ### Domain
 
