@@ -32,3 +32,56 @@ a{color:inherit}
   .ew-footer-grid{grid-template-columns:1fr !important;gap:34px !important}
   .ew-why{grid-template-columns:1fr !important;gap:18px !important}
 }
+
+/* ---- Werkwijze: horizontale tijdlijn ---- */
+.wp-track{position:relative}
+.wp-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:28px}
+/* Basislijn stopt exact op het midden van het laatste bolletje (niet doorlopen!): */
+.wp-line{position:absolute;top:0;left:6px;height:2px}
+.wp-line-base{width:calc((100% - 140px) * 5 / 6 + 140px);background:rgba(0,0,0,.14)}
+.wp-line-fill{width:0;background:var(--accent);box-shadow:0 0 12px color-mix(in srgb,var(--accent) 60%,transparent);transition:width .25s linear}
+.wp-node{display:flex;flex-direction:column;min-width:0}
+.wp-dotrow{position:relative;display:flex;align-items:center}
+/* Bolletje: 12px, gecentreerd op de lijn (lijn-midden = y 1px), DEKKENDE kleuren
+   zodat de lijn er niet doorheen schijnt: */
+.wp-dot{width:12px;height:12px;border-radius:999px;box-sizing:border-box;flex:none;
+  border:2px solid #c9c7c2;background:#f6f5f2;margin-top:-5px;transition:all .4s ease}
+.wp-node.on .wp-dot{border-color:var(--accent);background:var(--accent);
+  box-shadow:0 0 14px color-mix(in srgb,var(--accent) 55%,transparent)}
+.wp-n{font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.06em;
+  color:rgba(0,0,0,.35);margin-top:22px;transition:color .4s ease}
+.wp-node.on .wp-n{color:var(--accent)}
+.wp-node h3{margin:10px 0 8px;font-size:19px;font-weight:600;letter-spacing:-.015em;
+  line-height:1.2;overflow-wrap:break-word;hyphens:auto}
+.wp-node p{margin:0;font-size:14px;line-height:1.55;color:rgba(0,0,0,.6);text-wrap:pretty}
+/* Lus + pijl op laatste stap. Geometrie: dot-midden = (22,40) in het 44×44 viewBox;
+   boog r=17 begint rechts NA het bolletje (4px ruimte), gaat over de top en eindigt
+   links in een gevulde pijlpunt die het bolletje in wijst. Niet aanpassen. */
+.wp-loop{position:absolute;left:-16px;top:-39px;width:44px;height:44px;
+  color:#c9c7c2;pointer-events:none;overflow:visible;transition:color .4s ease,filter .4s ease}
+.wp-track.done .wp-loop{color:var(--accent);
+  filter:drop-shadow(0 0 6px color-mix(in srgb,var(--accent) 50%,transparent))}
+/* Responsive: onder 1120px verticaal, lijn + lus verbergen: */
+@media (max-width:1120px){
+  .wp-grid{grid-template-columns:1fr;gap:18px}
+  .wp-line,.wp-loop{display:none}
+  .wp-node{display:grid;grid-template-columns:12px 1fr;gap:0 16px;align-items:start}
+  .wp-dotrow{margin-top:29px} /* bolletje uitlijnen met het nummer */
+}
+
+/* ---- FAQ: accordeon ---- */
+.faq-acc{max-width:760px;border-bottom:1px solid rgba(0,0,0,.16)}
+.faq-item{border-top:1px solid rgba(0,0,0,.16)}
+.faq-q{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:flex;
+  align-items:baseline;gap:18px;padding:24px 2px}
+.faq-q:hover{color:var(--accent)}
+.faq-q h3{margin:0;font-size:19px;font-weight:600;letter-spacing:-.01em;flex:1}
+.faq-mark{font-family:'JetBrains Mono',monospace;font-size:18px;line-height:1;
+  color:rgba(0,0,0,.4);transition:transform .3s ease,color .3s ease}
+.faq-item.open .faq-mark{color:var(--accent);transform:rotate(45deg)} /* + wordt × */
+/* Hoogte-animatie via grid-rows (geen max-height hacks): */
+.faq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease;overflow:hidden}
+.faq-item.open .faq-a{grid-template-rows:1fr}
+.faq-a > div{min-height:0}
+.faq-a p{margin:0;padding:0 40px 26px 2px;font-size:15.5px;line-height:1.6;
+  color:rgba(0,0,0,.62);max-width:640px}

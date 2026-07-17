@@ -305,6 +305,58 @@
     });
   }
 
+  // ---- werkwijze: scroll-driven timeline fill ----
+  // The blue line grows on scroll and each dot colours the instant the line
+  // tip reaches it. Width is computed in px from the real track width so the
+  // line tip and the dot thresholds coincide exactly.
+  function startTimeline() {
+    const track = document.querySelector('.wp-track');
+    if (!track) return;
+    const fillEl = track.querySelector('.wp-line-fill');
+    const nodes = Array.from(track.querySelectorAll('.wp-node'));
+    const fullWidth = () => {
+      const colw = (track.clientWidth - 140) / 6; // 140 = 5 gaps × 28px
+      return 5 * (colw + 28);                      // ends on the last dot
+    };
+    if (reduceMotion) {
+      // Respect the reduced-motion policy: show the completed line at once.
+      fillEl.style.width = fullWidth().toFixed(1) + 'px';
+      nodes.forEach(n => n.classList.add('on'));
+      track.classList.add('done');
+      return;
+    }
+    function update() {
+      const vh = window.innerHeight || 800;
+      const r = track.getBoundingClientRect();
+      // progress 0..1: starts when the track reaches ~82% viewport height,
+      // fills over 55vh.
+      const p = Math.max(0, Math.min(1, (vh * 0.82 - r.top) / (vh * 0.55)));
+      fillEl.style.width = (p * fullWidth()).toFixed(1) + 'px';
+      nodes.forEach((n, i) => n.classList.toggle('on', p >= i / 5 - 0.001));
+      track.classList.toggle('done', p >= 0.995);
+    }
+    document.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update, { passive: true });
+    update();
+  }
+
+  // ---- faq accordion ----
+  // One item open at a time; clicking the open item closes it (all-closed is
+  // allowed). The first item starts open (server-rendered).
+  function startFaq() {
+    document.querySelectorAll('.faq-acc .faq-q').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const wasOpen = item.classList.contains('open');
+        item.closest('.faq-acc').querySelectorAll('.faq-item.open').forEach(o => {
+          o.classList.remove('open');
+          o.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        });
+        if (!wasOpen) { item.classList.add('open'); btn.setAttribute('aria-expanded', 'true'); }
+      });
+    });
+  }
+
   // ---- init ----
   updateYears();
   document.addEventListener('scroll', updateHeader, true);
@@ -317,4 +369,6 @@
   updateHeader();
   startGlows();
   startWeb();
+  startTimeline();
+  startFaq();
 })();
