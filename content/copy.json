@@ -105,7 +105,6 @@
     "capH2": "We bouwen wat nog niet bestaat.",
     "capLead": "Geen standaardpakketten, geen concessies. Eén team dat de volledige stack beheerst — van fundament tot autonome agent — en dat bij je blijft.",
     "capTags": [
-      "Persoonlijke aandacht",
       "Stabiliteit",
       "Onderhoudbaarheid",
       "Betrouwbaarheid"
@@ -425,7 +424,6 @@
     "capH2": "We build what doesn't exist yet.",
     "capLead": "No standard packages, no compromises. One team that masters the full stack — from foundation to autonomous agent — and stays with you.",
     "capTags": [
-      "Personal attention",
       "Stability",
       "Maintainability",
       "Reliability"
@@ -449,7 +447,7 @@
       {
         "label": "AI & ML",
         "lines": [
-          "LLM's · RAG · Generative AI",
+          "LLMs · RAG · Generative AI",
           "fine-tuning · custom models"
         ]
       },
