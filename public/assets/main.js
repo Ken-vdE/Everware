@@ -180,39 +180,82 @@
     const self = document.querySelector('script[src$="main.js"]');
     const src = new URL('spline/spline-viewer.js', self ? self.src : location.href).href;
 
-    // Paint a static starfield across the whole hero so the scene's centred
-    // star-box isn't ringed by empty black. Drawn once (+ on resize) — no rAF,
-    // so no per-frame cost. Sits under the galaxy; denser scene stars overlay it.
-    const drawStarfield = () => {
+    // Starfield across the whole hero, filling the edges the scene leaves black.
+    // Evenly scattered, small (so they don't compete with the galaxy). It pans
+    // with the click-drag the user passes to Spline: on drag the stars translate
+    // by the same amount, wrapping off-screen stars back in as fresh stars on the
+    // trailing edge — so the field feels part of the same space as the galaxy.
+    // STAR_DRAG scales our movement to the scene's; tune it to match.
+    const STAR_DRAG = 0.1;
+    const setupStarfield = () => {
       const cv = document.getElementById('ew-stars');
       if (!cv) return;
       const ctx = cv.getContext('2d');
-      const paint = () => {
-        const dpr = window.devicePixelRatio || 1;
-        const w = heroEl.clientWidth, h = heroEl.clientHeight;
-        cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      let w = 0, h = 0, stars = [], raf = 0;
+      const pickColor = () => {
+        const r = Math.random(); // white → light-blue → blue → purple → magenta
+        return r < 0.42 ? '214,226,255' : r < 0.66 ? '147,197,253'
+             : r < 0.82 ? '96,165,250' : r < 0.93 ? '168,85,247' : '232,121,249';
+      };
+      const reroll = (s) => {
+        s.r = Math.random() < 0.9 ? 0.35 + Math.random() * 0.5 : 0.85 + Math.random() * 0.5;
+        s.a = 0.12 + Math.random() * 0.5;
+        s.c = pickColor();
+      };
+      const draw = () => {
         ctx.clearRect(0, 0, w, h);
-        // Evenly scattered across the whole hero (fills the edges the scene
-        // leaves black). Kept small so they don't compete with the galaxy.
-        const n = Math.round(w * h / 520);
-        for (let i = 0; i < n; i++) {
-          const x = Math.random() * w, y = Math.random() * h;
-          const r = Math.random() < 0.9 ? 0.35 + Math.random() * 0.5 : 0.85 + Math.random() * 0.5;
-          const a = 0.12 + Math.random() * 0.5;
-          // match the galaxy palette: white → light-blue → blue → purple → magenta
-          const roll = Math.random();
-          const c = roll < 0.42 ? '214,226,255'
-                  : roll < 0.66 ? '147,197,253'
-                  : roll < 0.82 ? '96,165,250'
-                  : roll < 0.93 ? '168,85,247'
-                  : '232,121,249';
-          ctx.fillStyle = `rgba(${c},${a})`;
-          ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+        for (const s of stars) {
+          ctx.fillStyle = `rgba(${s.c},${s.a})`;
+          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.2832); ctx.fill();
         }
       };
-      paint();
-      window.addEventListener('resize', paint, { passive: true });
+      const scheduleDraw = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); }); };
+      const init = () => {
+        const dpr = window.devicePixelRatio || 1;
+        w = heroEl.clientWidth; h = heroEl.clientHeight;
+        cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const n = Math.round(w * h / 520);
+        stars = [];
+        for (let i = 0; i < n; i++) {
+          const s = { x: Math.random() * w, y: Math.random() * h };
+          reroll(s); stars.push(s);
+        }
+        draw();
+      };
+
+      // Pan with the pointer drag; recycle stars that leave the frame as new
+      // ones entering from the opposite (trailing) edge.
+      const M = 4;
+      let dragging = false, lx = 0, ly = 0;
+      const onDown = (e) => {
+        if (e.button !== 0 || (e.target.closest && e.target.closest('a,button,input,textarea'))) return;
+        const r = heroEl.getBoundingClientRect();
+        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;
+        dragging = true; lx = e.clientX; ly = e.clientY;
+      };
+      const onMove = (e) => {
+        if (!dragging) return;
+        const dx = (e.clientX - lx) * STAR_DRAG, dy = (e.clientY - ly) * STAR_DRAG;
+        lx = e.clientX; ly = e.clientY;
+        if (!dx && !dy) return;
+        const sw = w + 2 * M, sh = h + 2 * M;
+        for (const s of stars) {
+          s.x += dx; s.y += dy;
+          if (s.x > w + M) { s.x -= sw; s.y = Math.random() * h; reroll(s); }
+          else if (s.x < -M) { s.x += sw; s.y = Math.random() * h; reroll(s); }
+          if (s.y > h + M) { s.y -= sh; s.x = Math.random() * w; reroll(s); }
+          else if (s.y < -M) { s.y += sh; s.x = Math.random() * w; reroll(s); }
+        }
+        scheduleDraw();
+      };
+      const onUp = () => { dragging = false; };
+      window.addEventListener('mousedown', onDown, { passive: true });
+      window.addEventListener('mousemove', onMove, { passive: true });
+      window.addEventListener('mouseup', onUp, { passive: true });
+      window.addEventListener('blur', onUp, { passive: true });
+      window.addEventListener('resize', init, { passive: true });
+      init();
     };
 
     let revealed = false;
@@ -220,7 +263,7 @@
       if (revealed) return;
       revealed = true;
       heroEl.classList.add('ew-spline-active'); // fades in the galaxy, hides the dot grid
-      drawStarfield();
+      setupStarfield();
     };
     // The scene renders at its native resolution (no up-scaling — that blurs it).
     // Note: the "Built with Spline" badge is baked into the WebGL render, not the
