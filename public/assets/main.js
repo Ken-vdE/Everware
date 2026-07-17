@@ -295,7 +295,18 @@
     formEl.style.display = 'grid';
   });
 
+  // Re-derive the years-of-experience count from the visitor's clock so the
+  // statically rendered number self-increments on Jan 1 without a rebuild.
+  function updateYears() {
+    const now = new Date().getFullYear();
+    document.querySelectorAll('.ew-years').forEach(el => {
+      const since = parseInt(el.getAttribute('data-since'), 10);
+      if (since) el.textContent = String(now - since);
+    });
+  }
+
   // ---- init ----
+  updateYears();
   document.addEventListener('scroll', updateHeader, true);
   window.addEventListener('resize', updateHeader, { passive: true });
 

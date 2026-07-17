@@ -6,14 +6,16 @@ import json
 import logging
 import os
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 ROOT = Path(__file__).resolve().parent.parent
 PUBLIC = ROOT / "public"
 DEFAULT_SITE_URL = "https://everware.nl"
+FOUNDED_YEAR = 2014  # "{years}+ ervaring" = current year - this; JS re-derives client-side
 
 # Child of the "everware" logger configured in server.main — records propagate
 # to its stderr + rotating-file handlers.
@@ -103,6 +105,23 @@ def jsonld(lang: str, t: dict, url_path: str, site: str) -> str:
     return '<script type="application/ld+json">\n' + payload + "\n</script>"
 
 
+def inject_years(value, span: Markup):
+    """Replace the `{years}` token in every string leaf of `value` with a
+    prebaked <span class="ew-years"> (correct at build time). main.js overwrites
+    its text from the visitor's clock on load, so the count increments Jan 1
+    without a rebuild while the served HTML stays static. Non-token strings pass
+    through unchanged (still autoescaped by Jinja)."""
+    if isinstance(value, str):
+        if "{years}" in value:
+            return Markup(span.join(escape(p) for p in value.split("{years}")))
+        return value
+    if isinstance(value, list):
+        return [inject_years(v, span) for v in value]
+    if isinstance(value, dict):
+        return {k: inject_years(v, span) for k, v in value.items()}
+    return value
+
+
 def render_pages() -> None:
     start = time.perf_counter()
     copy = json.loads((ROOT / "content" / "copy.json").read_text(encoding="utf-8"))
@@ -113,7 +132,9 @@ def render_pages() -> None:
     )
     template = env.get_template("index.html.j2")
     site = site_url()
-    logger.info("rendering pages (site_url=%s)", site)
+    years = datetime.now(timezone.utc).year - FOUNDED_YEAR
+    year_span = Markup(f'<span class="ew-years" data-since="{FOUNDED_YEAR}">{years}</span>')
+    logger.info("rendering pages (site_url=%s, years=%d)", site, years)
     pages = [
         ("nl", PUBLIC / "index.html", "/", "assets/", "./", "en/"),
         ("en", PUBLIC / "en" / "index.html", "/en/", "../assets/", "../", "./"),
@@ -122,7 +143,7 @@ def render_pages() -> None:
         t = copy[lang]
         html = template.render(
             lang=lang,
-            t=t,
+            t=inject_years(t, year_span),
             site_url=site,
             canonical=site + url_path,
             og_locale="nl_NL" if lang == "nl" else "en_US",

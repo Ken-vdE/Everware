@@ -76,6 +76,7 @@
       }
     ],
     "status": [
+      "{years}+ jaar ervaring",
       "Persoonlijke aandacht",
       "Stabiliteit",
       "Onderhoudbaarheid",
@@ -235,12 +236,6 @@
     ],
     "abRows": [
       {
-        "label": "Werkgebied",
-        "lines": [
-          "Nederland · remote-first · op locatie"
-        ]
-      },
-      {
         "label": "Focus",
         "lines": [
           "maatwerk software · AI · agents",
@@ -248,9 +243,21 @@
         ]
       },
       {
+        "label": "Werkgebied",
+        "lines": [
+          "Nederland · remote-first · op locatie"
+        ]
+      },
+      {
         "label": "Aanpak",
         "lines": [
           "persoonlijk · langdurig betrokken"
+        ]
+      },
+      {
+        "label": "Ervaring",
+        "lines": [
+          "{years}+ jaar"
         ]
       }
     ],
@@ -389,6 +396,7 @@
       }
     ],
     "status": [
+      "{years}+ years experience",
       "Personal attention",
       "Stability",
       "Maintainability",
@@ -548,12 +556,6 @@
     ],
     "abRows": [
       {
-        "label": "Service area",
-        "lines": [
-          "Netherlands · remote-first · on-site"
-        ]
-      },
-      {
         "label": "Focus",
         "lines": [
           "custom software · AI · agents",
@@ -561,9 +563,21 @@
         ]
       },
       {
+        "label": "Service area",
+        "lines": [
+          "Netherlands · remote-first · on-site"
+        ]
+      },
+      {
         "label": "Approach",
         "lines": [
           "personal · long-term involved"
+        ]
+      },
+      {
+        "label": "Experience",
+        "lines": [
+          "{years}+ years"
         ]
       }
     ],
