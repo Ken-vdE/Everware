@@ -13,6 +13,8 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field
 
+from server.render import render_pages
+
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
 RESEND_URL = "https://api.resend.com/emails"
 
@@ -113,5 +115,7 @@ async def contact(msg: ContactIn, request: Request):
     return {"ok": True}
 
 
-# Mounted last: everything not matched above is served from public/.
+# Render the static pages once at startup (fails loud on a missing key),
+# then mount last: everything not matched above is served from public/.
+render_pages()
 app.mount("/", StaticFiles(directory=PUBLIC, html=True), name="site")

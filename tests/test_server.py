@@ -144,5 +144,6 @@ def test_assets_served():
 def test_no_leaks_outside_public():
     assert client.get("/docs").status_code == 404          # swagger disabled
     assert client.get("/server/main.py").status_code == 404
-    assert client.get("/scripts/build-en.js").status_code == 404
+    assert client.get("/content/copy.json").status_code == 404
+    assert client.get("/templates/index.html.j2").status_code == 404
     assert client.get("/../pyproject.toml").status_code in (400, 404)
