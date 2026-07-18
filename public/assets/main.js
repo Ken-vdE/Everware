@@ -253,12 +253,12 @@
         scheduleDraw();
       };
       const onUp = () => { dragging = false; };
-      window.addEventListener('mousedown', onDown, { passive: true });
-      window.addEventListener('mousemove', onMove, { passive: true });
-      window.addEventListener('mouseup', onUp, { passive: true });
-      window.addEventListener('blur', onUp, { passive: true });
-      window.addEventListener('resize', init, { passive: true });
-      init();
+      // window.addEventListener('mousedown', onDown, { passive: true });
+      // window.addEventListener('mousemove', onMove, { passive: true });
+      // window.addEventListener('mouseup', onUp, { passive: true });
+      // window.addEventListener('blur', onUp, { passive: true });
+      // window.addEventListener('resize', init, { passive: true });
+      // init();
     };
 
     let revealed = false;
@@ -266,7 +266,7 @@
       if (revealed) return;
       revealed = true;
       heroEl.classList.add('ew-spline-active'); // fades in the galaxy, hides the dot grid
-      setupStarfield();
+      // setupStarfield();
     };
     // The scene renders at its native resolution (no up-scaling — that blurs it).
     // Note: the "Built with Spline" badge is baked into the WebGL render, not the
