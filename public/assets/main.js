@@ -251,7 +251,7 @@
         // rotation curve (angular speed ∝ 1/radius) keeps every orbiter's pace
         // gentle regardless of how far out it sits — a coherent galactic swirl.
         const cx = f.w / 2, cy = f.h / 2, R = Math.min(f.w, f.h);
-        const nMove = Math.min(8, Math.max(3, Math.round(f.w * f.h / 180000)));
+        const nMove = Math.min(24, Math.max(8, Math.round(f.w * f.h / 100000)));
         for (let i = 0; i < nMove && i < f.stars.length; i++) {
           const s = f.stars[i];
           s.mover = true; s.cx = cx; s.cy = cy;

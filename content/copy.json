@@ -279,7 +279,7 @@
       },
       {
         "q": "Welke technologieën gebruiken jullie?",
-        "a": "De volledige stack — van Python, PHP, Node, Java, Go, C++ en Rust tot React en Vue, met LLM's, RAG en keuze in elk AI model. We kiezen wat past bij jouw situatie."
+        "a": "De volledige stack — van Python, PHP, Node, Java, Go, C++ en Rust tot Vue, React en React Native, met LLM's, RAG en keuze in elk AI model. We kiezen wat past bij jouw situatie."
       },
       {
         "q": "Blijven jullie betrokken na oplevering?",
@@ -598,7 +598,7 @@
       },
       {
         "q": "Which technologies do you use?",
-        "a": "The full stack — from Python, PHP, Node, Java, Go, C++ and Rust to React and Vue, with LLMs, RAG and a choice of any AI model. We pick what fits your situation."
+        "a": "The full stack — from Python, PHP, Node, Java, Go, C++ and Rust to Vue, React and React Native, with LLMs, RAG and a choice of any AI model. We pick what fits your situation."
       },
       {
         "q": "Do you stay involved after delivery?",
