@@ -207,12 +207,13 @@
   }
 
   // ---- starfield ----
-  // Faint stars painted over each black host (.ew-stars canvas): the diensten and
-  // over-ons sections each have their own, and the contact section + footer share
-  // one continuous field via the .ew-starfield wrapper. Stars parallax vertically
-  // with scroll — bigger/nearer stars drift faster than small/distant ones, so the
-  // field reads as depth (the y/depth cue the old drag version had). Only fields
-  // near the viewport redraw. Inert and skipped under prefers-reduced-motion.
+  // Faint, sparse stars painted over each black host (.ew-stars canvas): the
+  // diensten and over-ons sections each have their own, and the contact section +
+  // footer share one continuous field via the .ew-starfield wrapper. The whole
+  // field parallaxes vertically with scroll — bigger/nearer stars drift faster —
+  // and a handful of stars per field slowly orbit the field's centre, like a
+  // galaxy's coherent rotation. Only fields near the viewport redraw. Skipped
+  // entirely under prefers-reduced-motion.
   function startStarfields() {
     if (reduceMotion) return;
     const PARALLAX = 0.12; // scroll offset → star drift, before the per-star depth factor
@@ -234,17 +235,30 @@
         if (!f.w || !f.h) return;
         cv.width = Math.round(f.w * dpr); cv.height = Math.round(f.h * dpr);
         f.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        const n = Math.round(f.w * f.h / 1100);
+        const n = Math.round(f.w * f.h / 2000);
         f.stars = [];
         for (let i = 0; i < n; i++) {
           const r = Math.random() < 0.9 ? 0.3 + Math.random() * 0.4 : 0.7 + Math.random() * 0.35;
           f.stars.push({
             x: Math.random() * f.w, y: Math.random() * f.h, r,
             a: 0.12 + Math.random() * 0.5, c: pickColor(),
-            // Depth: nearer (bigger) stars drift faster, so scroll reads as motion
-            // through 3D space, not a flat slide.
-            m: 0.3 + (r - 0.3) * 1.7
+            // Depth: nearer (bigger) stars drift faster on scroll, so it reads as
+            // motion through 3D space, not a flat slide.
+            m: 0.3 + (r - 0.3) * 1.7, mover: false
           });
+        }
+        // Promote just a few stars to slow orbiters about the field centre. A flat
+        // rotation curve (angular speed ∝ 1/radius) keeps every orbiter's pace
+        // gentle regardless of how far out it sits — a coherent galactic swirl.
+        const cx = f.w / 2, cy = f.h / 2, R = Math.min(f.w, f.h);
+        const nMove = Math.min(8, Math.max(3, Math.round(f.w * f.h / 180000)));
+        for (let i = 0; i < nMove && i < f.stars.length; i++) {
+          const s = f.stars[i];
+          s.mover = true; s.cx = cx; s.cy = cy;
+          s.rad = R * (0.12 + Math.random() * 0.32);
+          s.ang = Math.random() * 6.2832;
+          s.spd = (5 + Math.random() * 4) / s.rad; // rad/s, all same direction
+          s.a = Math.min(0.9, s.a + 0.2);          // a touch brighter so the drift reads
         }
       };
       f.init();
@@ -252,30 +266,37 @@
     });
     if (!fields.length) return;
 
-    const render = () => {
+    // One rAF loop drives both the scroll parallax and the orbiters. Off-screen
+    // fields are skipped (no draw, orbiters effectively pause), so cost stays tied
+    // to whatever black section is actually on screen.
+    let last = 0;
+    const frame = (ts) => {
+      const dt = last ? Math.min(0.1, (ts - last) / 1000) : 0; // clamp tab-switch jumps
+      last = ts;
       for (const f of fields) {
         if (!f.h) continue;
         const rect = f.host.getBoundingClientRect();
         if (rect.bottom < 0 || rect.top > window.innerHeight) continue; // off-screen: skip
-        // Parallax anchored to the field's viewport position: 0 as its top meets
-        // the viewport top, growing as it scrolls past.
-        const pv = -rect.top * PARALLAX;
+        const pv = -rect.top * PARALLAX; // 0 as the field top meets the viewport top
         const ctx = f.ctx;
         ctx.clearRect(0, 0, f.w, f.h);
         for (const s of f.stars) {
+          let x = s.x, y = s.y;
+          if (s.mover) {
+            s.ang += s.spd * dt;
+            x = s.cx + Math.cos(s.ang) * s.rad;
+            y = s.cy + Math.sin(s.ang) * s.rad;
+          }
           ctx.fillStyle = `rgba(${s.c},${s.a})`;
           ctx.beginPath();
-          ctx.arc(s.x, wrap(s.y + pv * s.m, f.h), s.r, 0, 6.2832);
+          ctx.arc(x, wrap(y + pv * s.m, f.h), s.r, 0, 6.2832);
           ctx.fill();
         }
       }
+      requestAnimationFrame(frame);
     };
-
-    let raf = 0;
-    const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); }); };
-    render();
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', () => { fields.forEach(f => f.init()); render(); }, { passive: true });
+    requestAnimationFrame(frame);
+    window.addEventListener('resize', () => { fields.forEach(f => f.init()); }, { passive: true });
   }
 
   // ---- contact form ----
