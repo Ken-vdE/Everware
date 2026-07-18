@@ -180,93 +180,11 @@
     const self = document.querySelector('script[src$="main.js"]');
     const src = new URL('spline/spline-viewer.js', self ? self.src : location.href).href;
 
-    // Starfield across the whole hero, filling the edges the scene leaves black.
-    // Evenly scattered, small (so they don't compete with the galaxy). It reacts
-    // to the click-drag the user passes to Spline: stars parallax by their depth
-    // (nearer/bigger move more) so the drag reads as motion through 3D space, and
-    // stars leaving the frame wrap back in as fresh ones on the trailing edge.
-    // STAR_DRAG scales our movement to the scene's; tune it to match.
-    const STAR_DRAG = 0.05;
-    const setupStarfield = () => {
-      const cv = document.getElementById('ew-stars');
-      if (!cv) return;
-      const ctx = cv.getContext('2d');
-      let w = 0, h = 0, stars = [], raf = 0;
-      const pickColor = () => {
-        const r = Math.random(); // white → light-blue → blue → purple → magenta
-        return r < 0.42 ? '214,226,255' : r < 0.66 ? '147,197,253'
-             : r < 0.82 ? '96,165,250' : r < 0.93 ? '168,85,247' : '232,121,249';
-      };
-      const reroll = (s) => {
-        s.r = Math.random() < 0.9 ? 0.3 + Math.random() * 0.4 : 0.7 + Math.random() * 0.35;
-        s.a = 0.12 + Math.random() * 0.5;
-        s.c = pickColor();
-        // Depth cue: nearer (bigger) stars parallax faster than distant (smaller)
-        // ones, so a drag reads as moving through 3D space, not a flat slide.
-        s.m = 0.3 + (s.r - 0.3) * 1.7;
-      };
-      const draw = () => {
-        ctx.clearRect(0, 0, w, h);
-        for (const s of stars) {
-          ctx.fillStyle = `rgba(${s.c},${s.a})`;
-          ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.2832); ctx.fill();
-        }
-      };
-      const scheduleDraw = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); }); };
-      const init = () => {
-        const dpr = window.devicePixelRatio || 1;
-        w = heroEl.clientWidth; h = heroEl.clientHeight;
-        cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        const n = Math.round(w * h / 430);
-        stars = [];
-        for (let i = 0; i < n; i++) {
-          const s = { x: Math.random() * w, y: Math.random() * h };
-          reroll(s); stars.push(s);
-        }
-        draw();
-      };
-
-      // Pan with the pointer drag; recycle stars that leave the frame as new
-      // ones entering from the opposite (trailing) edge.
-      const M = 4;
-      let dragging = false, lx = 0, ly = 0;
-      const onDown = (e) => {
-        if (e.button !== 0 || (e.target.closest && e.target.closest('a,button,input,textarea'))) return;
-        const r = heroEl.getBoundingClientRect();
-        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) return;
-        dragging = true; lx = e.clientX; ly = e.clientY;
-      };
-      const onMove = (e) => {
-        if (!dragging) return;
-        const dx = (e.clientX - lx) * STAR_DRAG, dy = (e.clientY - ly) * STAR_DRAG;
-        lx = e.clientX; ly = e.clientY;
-        if (!dx && !dy) return;
-        const sw = w + 2 * M, sh = h + 2 * M;
-        for (const s of stars) {
-          s.x += dx * s.m; s.y += dy * s.m; // per-star depth → parallax
-          if (s.x > w + M) { s.x -= sw; s.y = Math.random() * h; reroll(s); }
-          else if (s.x < -M) { s.x += sw; s.y = Math.random() * h; reroll(s); }
-          if (s.y > h + M) { s.y -= sh; s.x = Math.random() * w; reroll(s); }
-          else if (s.y < -M) { s.y += sh; s.x = Math.random() * w; reroll(s); }
-        }
-        scheduleDraw();
-      };
-      const onUp = () => { dragging = false; };
-      // window.addEventListener('mousedown', onDown, { passive: true });
-      // window.addEventListener('mousemove', onMove, { passive: true });
-      // window.addEventListener('mouseup', onUp, { passive: true });
-      // window.addEventListener('blur', onUp, { passive: true });
-      // window.addEventListener('resize', init, { passive: true });
-      // init();
-    };
-
     let revealed = false;
     const reveal = () => {
       if (revealed) return;
       revealed = true;
       heroEl.classList.add('ew-spline-active'); // fades in the galaxy, hides the dot grid
-      // setupStarfield();
     };
     // The scene renders at its native resolution (no up-scaling — that blurs it).
     // Note: the "Built with Spline" badge is baked into the WebGL render, not the
@@ -286,6 +204,78 @@
       }, 6000);
     };
     document.head.appendChild(script);
+  }
+
+  // ---- starfield ----
+  // Faint stars painted over each black host (.ew-stars canvas): the diensten and
+  // over-ons sections each have their own, and the contact section + footer share
+  // one continuous field via the .ew-starfield wrapper. Stars parallax vertically
+  // with scroll — bigger/nearer stars drift faster than small/distant ones, so the
+  // field reads as depth (the y/depth cue the old drag version had). Only fields
+  // near the viewport redraw. Inert and skipped under prefers-reduced-motion.
+  function startStarfields() {
+    if (reduceMotion) return;
+    const PARALLAX = 0.12; // scroll offset → star drift, before the per-star depth factor
+    const pickColor = () => {
+      const r = Math.random(); // white → light-blue → blue → purple → magenta
+      return r < 0.42 ? '214,226,255' : r < 0.66 ? '147,197,253'
+           : r < 0.82 ? '96,165,250' : r < 0.93 ? '168,85,247' : '232,121,249';
+    };
+    const wrap = (v, h) => ((v % h) + h) % h; // keep parallaxed stars inside the frame
+
+    const fields = [];
+    document.querySelectorAll('canvas.ew-stars').forEach((cv) => {
+      const host = cv.parentElement;
+      if (!host) return;
+      const f = { cv, host, ctx: cv.getContext('2d'), w: 0, h: 0, stars: [] };
+      f.init = () => {
+        const dpr = window.devicePixelRatio || 1;
+        f.w = host.clientWidth; f.h = host.clientHeight;
+        if (!f.w || !f.h) return;
+        cv.width = Math.round(f.w * dpr); cv.height = Math.round(f.h * dpr);
+        f.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const n = Math.round(f.w * f.h / 1100);
+        f.stars = [];
+        for (let i = 0; i < n; i++) {
+          const r = Math.random() < 0.9 ? 0.3 + Math.random() * 0.4 : 0.7 + Math.random() * 0.35;
+          f.stars.push({
+            x: Math.random() * f.w, y: Math.random() * f.h, r,
+            a: 0.12 + Math.random() * 0.5, c: pickColor(),
+            // Depth: nearer (bigger) stars drift faster, so scroll reads as motion
+            // through 3D space, not a flat slide.
+            m: 0.3 + (r - 0.3) * 1.7
+          });
+        }
+      };
+      f.init();
+      fields.push(f);
+    });
+    if (!fields.length) return;
+
+    const render = () => {
+      for (const f of fields) {
+        if (!f.h) continue;
+        const rect = f.host.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) continue; // off-screen: skip
+        // Parallax anchored to the field's viewport position: 0 as its top meets
+        // the viewport top, growing as it scrolls past.
+        const pv = -rect.top * PARALLAX;
+        const ctx = f.ctx;
+        ctx.clearRect(0, 0, f.w, f.h);
+        for (const s of f.stars) {
+          ctx.fillStyle = `rgba(${s.c},${s.a})`;
+          ctx.beginPath();
+          ctx.arc(s.x, wrap(s.y + pv * s.m, f.h), s.r, 0, 6.2832);
+          ctx.fill();
+        }
+      }
+    };
+
+    let raf = 0;
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); }); };
+    render();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', () => { fields.forEach(f => f.init()); render(); }, { passive: true });
   }
 
   // ---- contact form ----
@@ -399,6 +389,7 @@
   updateHeader();
   startGlows();
   startSpline();
+  startStarfields();
   startTimeline();
   startFaq();
 })();
