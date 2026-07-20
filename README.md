@@ -124,3 +124,60 @@ uv run --env-file .env uvicorn server.main:app --host 0.0.0.0 --port 8000
 After a server start has rendered the pages, the `public/` directory also still works on any static host if the contact
 form is pointed at a hosted `/api/contact` (or disabled) — nothing in the
 HTML depends on the Python server except that endpoint.
+
+## Deployment (GCP)
+
+Hosted on Cloud Run (`europe-west4`), two environments, provisioned with Terraform
+(`infra/`) and deployed by GitHub Actions:
+
+- push to `staging` → deploys `everware-staging` (https://staging.everware.nl)
+- push to `main` → deploys `everware-prod` (https://everware.nl)
+
+### One-time bootstrap
+
+```bash
+# 1. Create the project and link billing (console or gcloud), then:
+gcloud auth application-default login
+
+# 2. Create the Terraform state bucket
+./infra/bootstrap.sh <PROJECT_ID>          # bucket: <PROJECT_ID>-tfstate
+
+# 3. Apply shared infra (APIs, Artifact Registry, WIF, deploy SA)
+cd infra/shared
+terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform apply -var="project_id=<PROJECT_ID>"
+
+# 4. Note the outputs — set them as GitHub repo Actions *Variables*:
+#    GCP_PROJECT_ID = <PROJECT_ID>
+#    WIF_PROVIDER   = $(terraform output -raw wif_provider)
+#    DEPLOY_SA      = $(terraform output -raw deploy_service_account)
+
+# 5. Apply each environment (set project_id in its terraform.tfvars first)
+cd ../environments/staging
+terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform apply
+cd ../prod
+terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform apply
+
+# 6. Add the Resend API key to each environment's secret
+printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-staging --data-file=-
+printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-prod --data-file=-
+
+# 7. Verify domains + set DNS
+#    Cloud Run prints the required DNS records for each mapped domain:
+gcloud beta run domain-mappings describe --domain=staging.everware.nl --region=europe-west4
+#    Add those records at the registrar for staging.everware.nl, everware.nl, www.everware.nl.
+#    Verify domain ownership in Google Search Console if prompted.
+```
+
+### Deploy
+
+```bash
+git push origin staging   # → staging
+# promote by merging staging → main:
+git push origin main       # → prod
+```
+
+Images are tagged by commit SHA in Artifact Registry. Terraform ignores the running
+image, so `terraform apply` never reverts a CI deploy.
