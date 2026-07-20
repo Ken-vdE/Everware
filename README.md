@@ -225,3 +225,13 @@ target HTTPS proxy, managed cert, forwarding rule). Not worth it for a low-traff
 marketing site, but it's the natural upgrade path — and it would also unlock
 multi-region failover (e.g. `europe-west4` primary + `europe-west1`) at the same
 time. Until then, app-level gzip is deliberately the pragmatic choice.
+
+### Notes
+
+- **Rotating the Resend key:** adding a new secret version does not restart running
+  instances (the `latest` ref is read at instance start). After
+  `gcloud secrets versions add …`, trigger a new revision — push the branch again, or
+  `gcloud run services update everware-<env> --region europe-west4`.
+- **Deploy to the run.app URL first:** to bring a service up before its domain is
+  verified, set `domains = []` in that env's `main.tf`, apply, then restore the domain
+  list and re-apply once the domain is verified (avoids a failed domain-mapping apply).
