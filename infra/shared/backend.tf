@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
     prefix = "shared"
-    # bucket supplied at init: terraform init -backend-config="bucket=<NAME>"
+    bucket = "our-cursor-502919-j1-tfstate"
   }
 }

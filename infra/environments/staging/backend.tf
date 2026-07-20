@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
     prefix = "staging"
-    # bucket supplied at init: -backend-config="bucket=<NAME>"
+    bucket = "our-cursor-502919-j1-tfstate"
   }
 }
