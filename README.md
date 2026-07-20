@@ -185,3 +185,16 @@ git push origin main       # → prod
 
 Images are tagged by commit SHA in Artifact Registry. Terraform ignores the running
 image, so `terraform apply` never reverts a CI deploy.
+
+### Networking (no VPC)
+
+There is no VPC. The app is stateless and reaches everything over Cloud Run's
+default managed networking: public ingress (`allUsers` invoker), public egress to
+the Resend API, and Secret Manager over Google APIs. `infra/` contains no
+`google_compute_network`, subnet, Serverless VPC Access connector, Direct VPC
+egress, or Cloud NAT.
+
+Add VPC networking only when a private resource is introduced — Cloud SQL / AlloyDB
+over private IP, Memorystore (Redis), a static egress IP via Cloud NAT, or reaching
+internal-only services. That is done with a Serverless VPC Access connector or
+Direct VPC egress on the Cloud Run service.
