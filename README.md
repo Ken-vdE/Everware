@@ -124,3 +124,74 @@ uv run --env-file .env uvicorn server.main:app --host 0.0.0.0 --port 8000
 After a server start has rendered the pages, the `public/` directory also still works on any static host if the contact
 form is pointed at a hosted `/api/contact` (or disabled) — nothing in the
 HTML depends on the Python server except that endpoint.
+
+## Deployment (GCP)
+
+Hosted on Cloud Run (`europe-west4`), two environments, provisioned with Terraform
+(`infra/`) and deployed by GitHub Actions:
+
+- push to `staging` → deploys `everware-staging` (https://staging.everware.nl)
+- push to `main` → deploys `everware-prod` (https://everware.nl)
+
+### One-time bootstrap
+
+```bash
+# 1. Create the project and link billing (console or gcloud), then:
+gcloud auth application-default login
+
+# 2. Create the Terraform state bucket
+./infra/bootstrap.sh <PROJECT_ID>          # bucket: <PROJECT_ID>-tfstate
+
+# 3. Apply shared infra (APIs, Artifact Registry, WIF, deploy SA, AR reader for the run agent)
+cd infra/shared
+terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform apply -var="project_id=<PROJECT_ID>"
+
+# 4. Set these as GitHub repo Actions *Variables*:
+#    GCP_PROJECT_ID = <PROJECT_ID>
+#    WIF_PROVIDER   = $(terraform output -raw wif_provider)
+#    DEPLOY_SA      = $(terraform output -raw deploy_service_account)
+
+# 5. Verify domain ownership BEFORE applying the environments (domain mappings
+#    require a verified domain). Verify everware.nl, www.everware.nl,
+#    staging.everware.nl in Google Search Console for the deploying account.
+
+# 6. For EACH environment (staging first, then prod): set project_id in its
+#    terraform.tfvars, then create the secret container, seed it, then apply:
+cd ../environments/staging
+terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform apply -target=module.app.google_secret_manager_secret.resend    # secret container only
+printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-staging --data-file=-
+terraform apply    # full: service (secret now resolves) + domain mapping (domain verified)
+
+cd ../prod
+terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform apply -target=module.app.google_secret_manager_secret.resend
+printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-prod --data-file=-
+terraform apply
+
+# 7. Set the DNS records Cloud Run reports for each mapped domain:
+gcloud beta run domain-mappings describe --domain=staging.everware.nl --region=europe-west4
+#    Add the returned records at the registrar for each domain.
+```
+
+### Deploy
+
+```bash
+git push origin staging   # → staging
+# promote by merging staging → main:
+git push origin main       # → prod
+```
+
+Images are tagged by commit SHA in Artifact Registry. Terraform ignores the running
+image, so `terraform apply` never reverts a CI deploy.
+
+### Notes
+
+- **Rotating the Resend key:** adding a new secret version does not restart running
+  instances (the `latest` ref is read at instance start). After
+  `gcloud secrets versions add …`, trigger a new revision — push the branch again, or
+  `gcloud run services update everware-<env> --region europe-west4`.
+- **Deploy to the run.app URL first:** to bring a service up before its domain is
+  verified, set `domains = []` in that env's `main.tf`, apply, then restore the domain
+  list and re-apply once the domain is verified (avoids a failed domain-mapping apply).

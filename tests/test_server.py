@@ -147,3 +147,23 @@ def test_no_leaks_outside_public():
     assert client.get("/content/copy.json").status_code == 404
     assert client.get("/templates/index.html.j2").status_code == 404
     assert client.get("/../pyproject.toml").status_code in (400, 404)
+
+
+# ---- staging noindex ----
+
+def test_staging_adds_noindex_header(monkeypatch):
+    monkeypatch.setenv("ENVIRONMENT", "staging")
+    r = client.get("/")
+    assert r.headers.get("x-robots-tag") == "noindex, nofollow"
+
+
+def test_production_has_no_noindex_header(monkeypatch):
+    monkeypatch.setenv("ENVIRONMENT", "production")
+    r = client.get("/")
+    assert "x-robots-tag" not in r.headers
+
+
+def test_unset_environment_has_no_noindex_header(monkeypatch):
+    monkeypatch.delenv("ENVIRONMENT", raising=False)
+    r = client.get("/")
+    assert "x-robots-tag" not in r.headers
