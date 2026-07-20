@@ -33,6 +33,15 @@ if not any(isinstance(h, RotatingFileHandler) for h in logger.handlers):
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 
+@app.middleware("http")
+async def noindex_when_staging(request: Request, call_next):
+    """Keep the staging environment out of search indexes."""
+    response = await call_next(request)
+    if os.getenv("ENVIRONMENT") == "staging":
+        response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
 @app.exception_handler(Exception)
 async def log_unhandled_exception(request: Request, exc: Exception):
     logger.error(
