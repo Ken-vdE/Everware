@@ -11,7 +11,6 @@
 
   const headerEl = document.getElementById('ew-header');
   const heroEl = document.getElementById('ew-hero');
-  const webEl = document.getElementById('ew-web');
   const typedEl = document.getElementById('ew-typed');
   const titleEl = document.getElementById('ew-title');
   const groupEl = document.getElementById('ew-group');
@@ -19,13 +18,6 @@
   const formEl = document.getElementById('ew-form');
   const sentEl = document.getElementById('ew-sent');
   const againBtn = document.getElementById('ew-again');
-
-  function accentRGB() {
-    let hex = CONFIG.accentColor.replace('#', '');
-    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
-    const n = parseInt(hex, 16) || 0;
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-  }
 
   // ---- i18n ----
   // All strings are baked into the page server-side; the only language-
@@ -173,89 +165,138 @@
     requestAnimationFrame(glowTick);
   }
 
-  // ---- hero pointer web canvas ----
-  function startWeb() {
-    if (!webEl || !heroEl || reduceMotion) return;
-    const ctx = webEl.getContext('2d');
-    const dots = new Map();
-    const pointer = { x: 0, y: 0, active: false };
-    let lastMove = performance.now();
-    let lastT = performance.now();
-    let growth = 0;
+  // ---- hero galaxy (Spline) ----
+  // Replaces the old pointer canvas with an interactive 3D galaxy, but only on
+  // capable viewports: reduced-motion and phones keep the dot-grid fallback and
+  // never download the ~2 MB WebGL runtime. The viewer bundle is self-hosted in
+  // assets/spline/ (no third-party CDN at page load).
+  function startSpline() {
+    const viewer = document.getElementById('ew-spline');
+    if (!viewer || !heroEl || reduceMotion) return;
+    if (!window.matchMedia('(min-width: 861px)').matches) return; // phones keep the dot grid
 
-    const resize = () => {
-      const dpr = window.devicePixelRatio || 1;
-      webEl.width = Math.round(heroEl.clientWidth * dpr);
-      webEl.height = Math.round(heroEl.clientHeight * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // main.js and the viewer bundle share the assets/ dir; derive the URL from
+    // this script's own src so it resolves for both / and /en/.
+    const self = document.querySelector('script[src$="main.js"]');
+    const src = new URL('spline/spline-viewer.js', self ? self.src : location.href).href;
+
+    let revealed = false;
+    const reveal = () => {
+      if (revealed) return;
+      revealed = true;
+      heroEl.classList.add('ew-spline-active'); // fades in the galaxy, hides the dot grid
     };
-    resize();
-    if (window.ResizeObserver) new ResizeObserver(resize).observe(heroEl);
+    // The scene renders at its native resolution (no up-scaling — that blurs it).
+    // Note: the "Built with Spline" badge is baked into the WebGL render, not the
+    // DOM, so it can't be removed here — that needs a paid Spline plan.
 
-    window.addEventListener('mousemove', (e) => {
-      const r = heroEl.getBoundingClientRect();
-      const x = e.clientX - r.left, y = e.clientY - r.top;
-      const inside = x >= 0 && y >= 0 && x <= r.width && y <= r.height;
-      if (inside) {
-        if (Math.hypot(x - pointer.x, y - pointer.y) > 2.5) lastMove = performance.now();
-        pointer.x = x; pointer.y = y; pointer.active = true;
-      } else pointer.active = false;
-    }, { passive: true });
-    window.addEventListener('mouseout', () => { pointer.active = false; }, { passive: true });
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = src;
+    script.onload = () => {
+      // Reveal once the scene is ready. Listen for both the public and runtime
+      // events; as a backstop, reveal after 6 s only if a canvas actually
+      // rendered, so a failed load leaves the dot-grid fallback in place.
+      viewer.addEventListener('load', reveal);
+      viewer.addEventListener('load-complete', reveal);
+      setTimeout(() => {
+        if (viewer.shadowRoot && viewer.shadowRoot.querySelector('canvas')) reveal();
+      }, 6000);
+    };
+    document.head.appendChild(script);
+  }
 
-    const webTick = () => {
-      const now = performance.now();
-      const dt = Math.min(0.05, (now - lastT) / 1000);
-      lastT = now;
-      const w = heroEl.clientWidth, h = heroEl.clientHeight;
-      ctx.clearRect(0, 0, w, h);
-      const [r, g, b] = accentRGB();
-      const moving = (now - lastMove) < 90;
-      const target = pointer.active ? (moving ? 0.06 : 1) : 0;
-      const k = target > growth ? 0.85 : (pointer.active ? 0.9 : 2.2);
-      growth += (target - growth) * Math.min(1, dt * k);
-      const R = 66 + growth * 270;
-      const GS = 28, OFF = 14;
-      if (pointer.active) {
-        const { x, y } = pointer;
-        const i0 = Math.floor((x - R - OFF) / GS), i1 = Math.ceil((x + R - OFF) / GS);
-        const j0 = Math.floor((y - R - OFF) / GS), j1 = Math.ceil((y + R - OFF) / GS);
-        for (let i = i0; i <= i1; i++) for (let j = j0; j <= j1; j++) {
-          const dx = OFF + GS * i, dy = OFF + GS * j;
-          if (dx < 0 || dy < 0 || dx > w || dy > h) continue;
-          const dist = Math.hypot(dx - x, dy - y);
-          if (dist > R) continue;
-          const key = i + ',' + j;
-          let d = dots.get(key);
-          if (!d) { d = { x: dx, y: dy, s: 0, ex: x, ey: y, p: 0 }; dots.set(key, d); }
-          const p = 1 - dist / R;
-          d.s = Math.max(d.s, Math.min(1, d.s + dt * 3.2 * p, p));
-          d.ex = x; d.ey = y; d.p = p; d._live = true;
+  // ---- starfield ----
+  // Faint, sparse stars painted over each black host (.ew-stars canvas): the
+  // diensten and over-ons sections each have their own, and the contact section +
+  // footer share one continuous field via the .ew-starfield wrapper. The whole
+  // field parallaxes vertically with scroll — bigger/nearer stars drift faster —
+  // and a handful of stars per field slowly orbit the field's centre, like a
+  // galaxy's coherent rotation. Only fields near the viewport redraw. Skipped
+  // entirely under prefers-reduced-motion.
+  function startStarfields() {
+    if (reduceMotion) return;
+    const PARALLAX = 0.12; // scroll offset → star drift, before the per-star depth factor
+    const pickColor = () => {
+      const r = Math.random(); // white → light-blue → blue → purple → magenta
+      return r < 0.42 ? '214,226,255' : r < 0.66 ? '147,197,253'
+           : r < 0.82 ? '96,165,250' : r < 0.93 ? '168,85,247' : '232,121,249';
+    };
+    const wrap = (v, h) => ((v % h) + h) % h; // keep parallaxed stars inside the frame
+
+    const fields = [];
+    document.querySelectorAll('canvas.ew-stars').forEach((cv) => {
+      const host = cv.parentElement;
+      if (!host) return;
+      const f = { cv, host, ctx: cv.getContext('2d'), w: 0, h: 0, stars: [] };
+      f.init = () => {
+        const dpr = window.devicePixelRatio || 1;
+        f.w = host.clientWidth; f.h = host.clientHeight;
+        if (!f.w || !f.h) return;
+        cv.width = Math.round(f.w * dpr); cv.height = Math.round(f.h * dpr);
+        f.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const n = Math.round(f.w * f.h / 2000);
+        f.stars = [];
+        for (let i = 0; i < n; i++) {
+          const r = Math.random() < 0.9 ? 0.3 + Math.random() * 0.4 : 0.7 + Math.random() * 0.35;
+          f.stars.push({
+            x: Math.random() * f.w, y: Math.random() * f.h, r,
+            a: 0.12 + Math.random() * 0.5, c: pickColor(),
+            // Depth: nearer (bigger) stars drift faster on scroll, so it reads as
+            // motion through 3D space, not a flat slide.
+            m: 0.3 + (r - 0.3) * 1.7, mover: false
+          });
+        }
+        // Promote just a few stars to slow orbiters about the field centre. A flat
+        // rotation curve (angular speed ∝ 1/radius) keeps every orbiter's pace
+        // gentle regardless of how far out it sits — a coherent galactic swirl.
+        const cx = f.w / 2, cy = f.h / 2, R = Math.min(f.w, f.h);
+        const nMove = Math.min(24, Math.max(8, Math.round(f.w * f.h / 100000)));
+        for (let i = 0; i < nMove && i < f.stars.length; i++) {
+          const s = f.stars[i];
+          s.mover = true; s.cx = cx; s.cy = cy;
+          s.rad = R * (0.12 + Math.random() * 0.32);
+          s.ang = Math.random() * 6.2832;
+          s.spd = (5 + Math.random() * 4) / s.rad; // rad/s, all same direction
+          s.a = Math.min(0.9, s.a + 0.2);          // a touch brighter so the drift reads
+        }
+      };
+      f.init();
+      fields.push(f);
+    });
+    if (!fields.length) return;
+
+    // One rAF loop drives both the scroll parallax and the orbiters. Off-screen
+    // fields are skipped (no draw, orbiters effectively pause), so cost stays tied
+    // to whatever black section is actually on screen.
+    let last = 0;
+    const frame = (ts) => {
+      const dt = last ? Math.min(0.1, (ts - last) / 1000) : 0; // clamp tab-switch jumps
+      last = ts;
+      for (const f of fields) {
+        if (!f.h) continue;
+        const rect = f.host.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) continue; // off-screen: skip
+        const pv = -rect.top * PARALLAX; // 0 as the field top meets the viewport top
+        const ctx = f.ctx;
+        ctx.clearRect(0, 0, f.w, f.h);
+        for (const s of f.stars) {
+          let x = s.x, y = s.y;
+          if (s.mover) {
+            s.ang += s.spd * dt;
+            x = s.cx + Math.cos(s.ang) * s.rad;
+            y = s.cy + Math.sin(s.ang) * s.rad;
+          }
+          ctx.fillStyle = `rgba(${s.c},${s.a})`;
+          ctx.beginPath();
+          ctx.arc(x, wrap(y + pv * s.m, f.h), s.r, 0, 6.2832);
+          ctx.fill();
         }
       }
-      ctx.lineWidth = 1;
-      for (const [key, d] of dots) {
-        const isLive = d._live;
-        d._live = false;
-        if (!isLive) d.s -= dt * 0.85;
-        if (d.s <= 0.012) { dots.delete(key); continue; }
-        const prox = 0.4 + 0.6 * (d.p || 0.4);
-        const a = d.s * prox * (isLive ? (0.055 + 0.15 * growth) : 0.03);
-        ctx.strokeStyle = `rgba(${r},${g},${b},${a})`;
-        ctx.beginPath(); ctx.moveTo(d.ex, d.ey); ctx.lineTo(d.x, d.y); ctx.stroke();
-        ctx.fillStyle = `rgba(${r},${g},${b},${Math.min(0.75, a * 1.6)})`;
-        ctx.beginPath(); ctx.arc(d.x, d.y, isLive ? 1.8 : 1.3, 0, 6.2832); ctx.fill();
-      }
-      if (pointer.active) {
-        const ca = 0.22 + 0.5 * growth;
-        ctx.fillStyle = `rgba(${r},${g},${b},${ca})`;
-        ctx.beginPath(); ctx.arc(pointer.x, pointer.y, 2.4, 0, 6.2832); ctx.fill();
-        ctx.strokeStyle = `rgba(${r},${g},${b},${ca * 0.4})`;
-        ctx.beginPath(); ctx.arc(pointer.x, pointer.y, 7 + growth * 6, 0, 6.2832); ctx.stroke();
-      }
-      requestAnimationFrame(webTick);
+      requestAnimationFrame(frame);
     };
-    requestAnimationFrame(webTick);
+    requestAnimationFrame(frame);
+    window.addEventListener('resize', () => { fields.forEach(f => f.init()); }, { passive: true });
   }
 
   // ---- contact form ----
@@ -368,7 +409,8 @@
   startTyping();
   updateHeader();
   startGlows();
-  startWeb();
+  startSpline();
+  startStarfields();
   startTimeline();
   startFaq();
 })();
