@@ -44,8 +44,13 @@ resource "google_cloud_run_v2_service" "app" {
         value = var.contact_to
       }
       env {
-        name  = "CONTACT_FROM"
-        value = var.contact_from
+        name = "CONTACT_FROM"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.contact_from.secret_id
+            version = "latest"
+          }
+        }
       }
       env {
         name = "RESEND_API_KEY"
@@ -64,5 +69,8 @@ resource "google_cloud_run_v2_service" "app" {
     ignore_changes = [template[0].containers[0].image]
   }
 
-  depends_on = [google_secret_manager_secret_iam_member.runtime_access]
+  depends_on = [
+    google_secret_manager_secret_iam_member.runtime_access,
+    google_secret_manager_secret_iam_member.contact_from_access,
+  ]
 }

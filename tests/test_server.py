@@ -180,3 +180,22 @@ def test_large_response_is_gzipped_when_accepted():
 def test_response_not_gzipped_when_not_accepted():
     r = client.get("/", headers={"Accept-Encoding": "identity"})
     assert "content-encoding" not in r.headers
+
+
+# ---- www → apex redirect ----
+
+def test_www_redirects_to_apex():
+    r = client.get("/", headers={"host": "www.everware.nl"}, follow_redirects=False)
+    assert r.status_code == 301
+    assert r.headers["location"] == "https://everware.nl/"
+
+
+def test_www_redirect_preserves_path_and_query():
+    r = client.get("/en/?ref=x", headers={"host": "www.everware.nl"}, follow_redirects=False)
+    assert r.status_code == 301
+    assert r.headers["location"] == "https://everware.nl/en/?ref=x"
+
+
+def test_apex_not_redirected():
+    r = client.get("/", headers={"host": "everware.nl"}, follow_redirects=False)
+    assert r.status_code == 200

@@ -44,7 +44,10 @@ pyproject.toml         Python project (uv)
 
 Configuration (see `.env.example`): `RESEND_API_KEY` (required for sending),
 `CONTACT_TO` (default `hallo@everware.nl`), `CONTACT_FROM` (must be a
-Resend-verified sender; `onboarding@resend.dev` works for testing).
+Resend-verified sender; `onboarding@resend.dev` works for testing). On Cloud Run
+both `RESEND_API_KEY` and `CONTACT_FROM` are injected from Secret Manager
+(`resend-api-key-<env>`, `contact-from-<env>`) — never set in Terraform files.
+Locally they come from `.env`.
 
 ## Development
 
@@ -157,17 +160,24 @@ terraform apply -var="project_id=<PROJECT_ID>"
 #    staging.everware.nl in Google Search Console for the deploying account.
 
 # 6. For EACH environment (staging first, then prod): set project_id in its
-#    terraform.tfvars, then create the secret container, seed it, then apply:
+#    terraform.tfvars, then create the two secret containers, seed both, then apply.
+#    Secret values (Resend key, CONTACT_FROM sender) are never committed to git.
 cd ../environments/staging
 terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
-terraform apply -target=module.app.google_secret_manager_secret.resend    # secret container only
-printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-staging --data-file=-
-terraform apply    # full: service (secret now resolves) + domain mapping (domain verified)
+terraform apply \
+  -target=module.app.google_secret_manager_secret.resend \
+  -target=module.app.google_secret_manager_secret.contact_from    # empty containers only
+printf '%s' "<RESEND_KEY>"            | gcloud secrets versions add resend-api-key-staging --data-file=-
+printf '%s' "onboarding@resend.dev"   | gcloud secrets versions add contact-from-staging  --data-file=-
+terraform apply    # full: service (secrets now resolve) + domain mapping (domain verified)
 
 cd ../prod
 terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
-terraform apply -target=module.app.google_secret_manager_secret.resend
-printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-prod --data-file=-
+terraform apply \
+  -target=module.app.google_secret_manager_secret.resend \
+  -target=module.app.google_secret_manager_secret.contact_from
+printf '%s' "<RESEND_KEY>"            | gcloud secrets versions add resend-api-key-prod --data-file=-
+printf '%s' "onboarding@resend.dev"   | gcloud secrets versions add contact-from-prod  --data-file=-
 terraform apply
 
 # 7. Set the DNS records Cloud Run reports for each mapped domain:
