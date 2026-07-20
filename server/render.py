@@ -37,6 +37,13 @@ def minify_enabled() -> bool:
     return os.getenv("ENVIRONMENT", "").strip().lower() in {"staging", "production"}
 
 
+def gtm_id() -> str:
+    """GTM container id to inject, or "" to omit the tag. Sourced from the
+    GTM_CONTAINER_ID env var, set per-environment in terraform — production only,
+    so staging/local traffic never hits the live analytics container."""
+    return os.getenv("GTM_CONTAINER_ID", "").strip()
+
+
 def asset_pair() -> tuple[str, str]:
     """(css_name, js_name) to reference from the HTML. When minifying, write
     style.min.css / main.min.js next to the originals (whitespace/comment strip
@@ -211,6 +218,7 @@ def render_pages() -> None:
             js_name=js_name,
             css_v=css_v,
             js_v=js_v,
+            gtm_id=gtm_id(),
             nl_href=nl_href,
             en_href=en_href,
             jsonld=Markup(jsonld(lang, t, url_path, site)),

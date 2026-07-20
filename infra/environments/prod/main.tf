@@ -6,6 +6,7 @@ module "app" {
   service_name           = "everware-prod"
   environment            = "production"
   site_url               = "https://everware.nl"
+  gtm_container_id       = "GTM-PVW78JG8"
   contact_to             = "hallo@everware.nl"
   secret_id              = "resend-api-key-prod"
   contact_from_secret_id = "contact-from-prod"
