@@ -345,7 +345,7 @@
             <textarea class="ew-input" name="message" required minlength="10" rows="4" placeholder="{{ t.ctIdeaPh }}" style="line-height:1.5;resize:vertical"></textarea>
           </label>
           <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:4px">
-            <button type="submit" style="border:none;cursor:pointer;background:var(--accent,#3B82F6);color:#fff;font-weight:600;font-size:15px;font-family:'Space Grotesk',sans-serif;padding:15px 30px;border-radius:999px;box-shadow:0 0 30px color-mix(in srgb,var(--accent,#3B82F6) 45%,transparent)">{{ t.ctSubmit }}</button>
+            <button id="ew-submit" type="submit" class="ew-submit" style="border:none;cursor:pointer;background:var(--accent,#3B82F6);color:#fff;font-weight:600;font-size:15px;font-family:'Space Grotesk',sans-serif;padding:15px 30px;border-radius:999px;box-shadow:0 0 30px color-mix(in srgb,var(--accent,#3B82F6) 45%,transparent)">{{ t.ctSubmit }}</button>
             <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:rgba(255,255,255,.45)"><span>{{ t.ctOrPre }}</span> <a href="mailto:hallo@everware.nl" class="ew-accent-link">hallo@everware.nl</a> <span>{{ t.ctOrMid }}</span> <a href="tel:+31732089198" class="ew-accent-link">073 208 9198</a></span>
           </div>
           <p id="ew-form-err" role="alert" style="display:none;margin:0;font-size:14px;color:#f87171">{{ t.ctErr }}</p>

@@ -303,13 +303,16 @@
   }
 
   // ---- contact form ----
+  // Select the button by id: the deployed HTML minifier drops the redundant
+  // submit-type attribute (submit is a form button's default), so a
+  // type-based selector would return null on the minified page.
+  const submitBtn = document.getElementById('ew-submit');
   formEl.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const btn = formEl.querySelector('button[type="submit"]');
     const errEl = document.getElementById('ew-form-err');
     errEl.style.display = 'none';
-    btn.disabled = true;
-    btn.style.opacity = '.6';
+    submitBtn.disabled = true;
+    submitBtn.classList.add('is-loading');
     const fd = new FormData(formEl);
     try {
       const res = await fetch('/api/contact', {
@@ -330,8 +333,8 @@
     } catch {
       errEl.style.display = 'block';
     } finally {
-      btn.disabled = false;
-      btn.style.opacity = '';
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('is-loading');
     }
   });
   againBtn.addEventListener('click', () => {

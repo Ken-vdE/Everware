@@ -16,3 +16,9 @@ gcloud storage buckets update "gs://${BUCKET}" --versioning
 echo
 echo "State bucket ready: gs://${BUCKET}"
 echo "Init each config with: terraform init -backend-config=\"bucket=${BUCKET}\""
+echo
+echo "Per environment, terraform creates two empty Secret Manager containers that"
+echo "must be seeded before the full apply (values are never committed to git):"
+echo "  resend-api-key-<env>  <- Resend API key"
+echo "  contact-from-<env>    <- CONTACT_FROM sender address"
+echo "Seed each with: printf '%s' '<value>' | gcloud secrets versions add <name> --data-file=-"
