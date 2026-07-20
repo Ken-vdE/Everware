@@ -1,0 +1,14 @@
+.git
+.venv
+.idea
+.pytest_cache
+__pycache__
+*.pyc
+logs
+tests
+docs
+scripts
+.env
+.env.example
+public/index.html
+public/en/index.html
