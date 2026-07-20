@@ -6,3 +6,10 @@ __pycache__/
 logs/
 public/index.html
 public/en/index.html
+
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfplan
