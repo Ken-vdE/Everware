@@ -21,4 +21,4 @@ USER appuser
 
 ENV PORT=8080
 EXPOSE 8080
-CMD ["sh", "-c", "uv run --no-dev uvicorn server.main:app --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "exec uv run --no-dev uvicorn server.main:app --host 0.0.0.0 --port ${PORT}"]
