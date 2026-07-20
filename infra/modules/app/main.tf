@@ -40,6 +40,10 @@ resource "google_cloud_run_v2_service" "app" {
         value = var.site_url
       }
       env {
+        name  = "GTM_CONTAINER_ID"
+        value = var.gtm_container_id
+      }
+      env {
         name  = "CONTACT_TO"
         value = var.contact_to
       }

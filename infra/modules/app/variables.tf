@@ -3,6 +3,11 @@ variable "region" { type = string }
 variable "service_name" { type = string }
 variable "environment" { type = string } # "staging" | "production"
 variable "site_url" { type = string }
+variable "gtm_container_id" {
+  type        = string
+  default     = ""
+  description = "Google Tag Manager container id (e.g. GTM-XXXX). Empty = tag omitted; set on production only."
+}
 variable "contact_to" { type = string }
 variable "secret_id" { type = string }              # Secret Manager secret id (Resend API key)
 variable "contact_from_secret_id" { type = string } # Secret Manager secret id (CONTACT_FROM value)
