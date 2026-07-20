@@ -9,7 +9,7 @@ import httpx
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field
 from starlette.middleware.gzip import GZipMiddleware
@@ -37,6 +37,18 @@ app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 # the platform for domain-mapped services, so it must happen here. See README
 # "Compression" for why a CDN would take this over at higher scale.
 app.add_middleware(GZipMiddleware, minimum_size=500)
+
+
+@app.middleware("http")
+async def redirect_www_to_apex(request: Request, call_next):
+    """301 www.<domain> → apex, so there is one canonical host."""
+    host = request.headers.get("host", "")
+    if host.startswith("www."):
+        target = f"https://{host[4:]}{request.url.path}"
+        if request.url.query:
+            target += f"?{request.url.query}"
+        return RedirectResponse(target, status_code=301)
+    return await call_next(request)
 
 
 @app.middleware("http")

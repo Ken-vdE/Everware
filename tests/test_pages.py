@@ -96,6 +96,26 @@ def test_og_image_alt_from_copy():
         assert f'<meta property="og:image:alt" content="{COPY[lang]["ogImageAlt"]}"' in page
 
 
+def test_submit_button_survives_html_minification():
+    """The deployed HTML minifier strips the redundant type="submit" attribute
+    (submit is a form button's default), so the contact-form JS must select the
+    button by a stable id — not by `button[type="submit"]`, which returned null
+    on the minified page and threw setting `.disabled`."""
+    import minify_html
+    from server import render
+
+    js = (render.PUBLIC / "assets" / "main.js").read_text(encoding="utf-8")
+    tpl = (ROOT / "templates" / "index.html.j2").read_text(encoding="utf-8")
+
+    assert "getElementById('ew-submit')" in js
+    assert 'button[type="submit"]' not in js
+    assert 'id="ew-submit"' in tpl
+
+    # prove the old selector really would break post-minification
+    mini = minify_html.minify('<button type="submit">x</button>', minify_js=False, minify_css=False)
+    assert "type=submit" not in mini and 'type="submit"' not in mini
+
+
 def test_render_logs_pages(caplog):
     from server import render
 
