@@ -208,5 +208,8 @@ behavior mirrors prod container shape. `.env` supplies config locally.
   stores, hence `bootstrap.sh` creates it outside Terraform.
 - **Branch-based builds** mean staging and prod images can diverge if branches
   diverge; discipline is to promote by merging `staging` → `main`.
-- **Secret values are manual** — first deploy will fail to send email until the
-  secret version is added; the app degrades gracefully (503 on contact, logged).
+- **Secret values are manual** — `RESEND_API_KEY` is wired as a Cloud Run secret
+  reference, so a missing secret version makes the revision fail to start (not a
+  graceful 503) — the secret version must be added before/at the first apply (via
+  the targeted-apply step in the runbook). The 503-and-logged degradation only
+  applies when the key is a plain unset env var, not a secret reference.

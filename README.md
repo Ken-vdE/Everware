@@ -142,33 +142,37 @@ gcloud auth application-default login
 # 2. Create the Terraform state bucket
 ./infra/bootstrap.sh <PROJECT_ID>          # bucket: <PROJECT_ID>-tfstate
 
-# 3. Apply shared infra (APIs, Artifact Registry, WIF, deploy SA)
+# 3. Apply shared infra (APIs, Artifact Registry, WIF, deploy SA, AR reader for the run agent)
 cd infra/shared
 terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
 terraform apply -var="project_id=<PROJECT_ID>"
 
-# 4. Note the outputs — set them as GitHub repo Actions *Variables*:
+# 4. Set these as GitHub repo Actions *Variables*:
 #    GCP_PROJECT_ID = <PROJECT_ID>
 #    WIF_PROVIDER   = $(terraform output -raw wif_provider)
 #    DEPLOY_SA      = $(terraform output -raw deploy_service_account)
 
-# 5. Apply each environment (set project_id in its terraform.tfvars first)
+# 5. Verify domain ownership BEFORE applying the environments (domain mappings
+#    require a verified domain). Verify everware.nl, www.everware.nl,
+#    staging.everware.nl in Google Search Console for the deploying account.
+
+# 6. For EACH environment (staging first, then prod): set project_id in its
+#    terraform.tfvars, then create the secret container, seed it, then apply:
 cd ../environments/staging
 terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
-terraform apply
+terraform apply -target=module.app.google_secret_manager_secret.resend    # secret container only
+printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-staging --data-file=-
+terraform apply    # full: service (secret now resolves) + domain mapping (domain verified)
+
 cd ../prod
 terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform apply -target=module.app.google_secret_manager_secret.resend
+printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-prod --data-file=-
 terraform apply
 
-# 6. Add the Resend API key to each environment's secret
-printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-staging --data-file=-
-printf '%s' "<RESEND_KEY>" | gcloud secrets versions add resend-api-key-prod --data-file=-
-
-# 7. Verify domains + set DNS
-#    Cloud Run prints the required DNS records for each mapped domain:
+# 7. Set the DNS records Cloud Run reports for each mapped domain:
 gcloud beta run domain-mappings describe --domain=staging.everware.nl --region=europe-west4
-#    Add those records at the registrar for staging.everware.nl, everware.nl, www.everware.nl.
-#    Verify domain ownership in Google Search Console if prompted.
+#    Add the returned records at the registrar for each domain.
 ```
 
 ### Deploy
