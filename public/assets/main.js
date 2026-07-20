@@ -176,8 +176,11 @@
     if (!window.matchMedia('(min-width: 861px)').matches) return; // phones keep the dot grid
 
     // main.js and the viewer bundle share the assets/ dir; derive the URL from
-    // this script's own src so it resolves for both / and /en/.
-    const self = document.querySelector('script[src$="main.js"]');
+    // this script's own src so it resolves for both / and /en/. Find it by id
+    // (robust to the ?v= cache-bust query and the minified main.min.js name;
+    // an endsWith("main.js") match breaks on both).
+    const self = document.getElementById('ew-main')
+      || document.querySelector('script[src*="main.min.js"], script[src*="main.js"]');
     const src = new URL('spline/spline-viewer.js', self ? self.src : location.href).href;
 
     let revealed = false;

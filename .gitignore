@@ -6,6 +6,8 @@ __pycache__/
 logs/
 public/index.html
 public/en/index.html
+public/assets/*.min.css
+public/assets/*.min.js
 
 # Terraform
 **/.terraform/*
