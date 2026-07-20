@@ -12,6 +12,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field
+from starlette.middleware.gzip import GZipMiddleware
 
 from server.render import render_pages
 
@@ -31,6 +32,11 @@ if not any(isinstance(h, RotatingFileHandler) for h in logger.handlers):
     logger.addHandler(_file_handler)
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+
+# Compress text responses (HTML/CSS/JS/JSON). Cloud Run does no compression at
+# the platform for domain-mapped services, so it must happen here. See README
+# "Compression" for why a CDN would take this over at higher scale.
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 
 @app.middleware("http")

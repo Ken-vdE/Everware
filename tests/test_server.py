@@ -167,3 +167,16 @@ def test_unset_environment_has_no_noindex_header(monkeypatch):
     monkeypatch.delenv("ENVIRONMENT", raising=False)
     r = client.get("/")
     assert "x-robots-tag" not in r.headers
+
+
+# ---- gzip compression ----
+
+def test_large_response_is_gzipped_when_accepted():
+    r = client.get("/", headers={"Accept-Encoding": "gzip"})
+    assert r.status_code == 200
+    assert r.headers.get("content-encoding") == "gzip"
+
+
+def test_response_not_gzipped_when_not_accepted():
+    r = client.get("/", headers={"Accept-Encoding": "identity"})
+    assert "content-encoding" not in r.headers
