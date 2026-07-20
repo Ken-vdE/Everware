@@ -185,3 +185,13 @@ git push origin main       # → prod
 
 Images are tagged by commit SHA in Artifact Registry. Terraform ignores the running
 image, so `terraform apply` never reverts a CI deploy.
+
+### Notes
+
+- **Rotating the Resend key:** adding a new secret version does not restart running
+  instances (the `latest` ref is read at instance start). After
+  `gcloud secrets versions add …`, trigger a new revision — push the branch again, or
+  `gcloud run services update everware-<env> --region europe-west4`.
+- **Deploy to the run.app URL first:** to bring a service up before its domain is
+  verified, set `domains = []` in that env's `main.tf`, apply, then restore the domain
+  list and re-apply once the domain is verified (avoids a failed domain-mapping apply).
