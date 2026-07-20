@@ -186,6 +186,46 @@ git push origin main       # → prod
 Images are tagged by commit SHA in Artifact Registry. Terraform ignores the running
 image, so `terraform apply` never reverts a CI deploy.
 
+### Networking (no VPC)
+
+There is no VPC. The app is stateless and reaches everything over Cloud Run's
+default managed networking: public ingress (`allUsers` invoker), public egress to
+the Resend API, and Secret Manager over Google APIs. `infra/` contains no
+`google_compute_network`, subnet, Serverless VPC Access connector, Direct VPC
+egress, or Cloud NAT.
+
+Add VPC networking only when a private resource is introduced — Cloud SQL / AlloyDB
+over private IP, Memorystore (Redis), a static egress IP via Cloud NAT, or reaching
+internal-only services. That is done with a Serverless VPC Access connector or
+Direct VPC egress on the Cloud Run service.
+
+### Compression
+
+Responses are gzip-compressed in the **app** — `GZipMiddleware` in `server/main.py`
+(`minimum_size=500`). This lives in the app on purpose: Cloud Run does no
+compression at the platform level for domain-mapped services, and
+`google_cloud_run_v2_service` has no compression setting, so Terraform cannot add
+it here. App-level gzip is the right tool at this scale — it cuts the ~57 KB HTML to
+~10–12 KB for one line of code and no infrastructure.
+
+**Why a CDN could take this over later.** If the site grows (more traffic, heavier
+assets, a global audience), move compression to the edge by fronting Cloud Run with
+a **Global external Application Load Balancer + Cloud CDN**. On the backend service,
+`enable_cdn = true` with `compression_mode = "AUTOMATIC"` gives edge gzip/brotli —
+and, unlike app-level gzip, it also:
+
+- **caches** static assets at Google's edge (no container hit, no re-compression per
+  request — app gzip re-compresses on every response),
+- serves from **points of presence near the user** (lower latency worldwide),
+- enables **brotli** (smaller than gzip) and HTTP/3, plus Cloud Armor / WAF.
+
+The trade-off is cost and complexity: the ALB has a ~€18/mo floor and **replaces the
+domain mapping** with the full LB stack (serverless NEG, backend service, URL map,
+target HTTPS proxy, managed cert, forwarding rule). Not worth it for a low-traffic
+marketing site, but it's the natural upgrade path — and it would also unlock
+multi-region failover (e.g. `europe-west4` primary + `europe-west1`) at the same
+time. Until then, app-level gzip is deliberately the pragmatic choice.
+
 ### Notes
 
 - **Rotating the Resend key:** adding a new secret version does not restart running

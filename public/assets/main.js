@@ -176,8 +176,11 @@
     if (!window.matchMedia('(min-width: 861px)').matches) return; // phones keep the dot grid
 
     // main.js and the viewer bundle share the assets/ dir; derive the URL from
-    // this script's own src so it resolves for both / and /en/.
-    const self = document.querySelector('script[src$="main.js"]');
+    // this script's own src so it resolves for both / and /en/. Find it by id
+    // (robust to the ?v= cache-bust query and the minified main.min.js name;
+    // an endsWith("main.js") match breaks on both).
+    const self = document.getElementById('ew-main')
+      || document.querySelector('script[src*="main.min.js"], script[src*="main.js"]');
     const src = new URL('spline/spline-viewer.js', self ? self.src : location.href).href;
 
     let revealed = false;
@@ -398,6 +401,90 @@
     });
   }
 
+  // ---- smooth wheel scroll ----
+  // Native mouse-wheel scrolling steps one notch (~100px) per event, so anything
+  // driven by scroll position (the starfield/glow parallax) jumps instead of
+  // gliding; trackpads already stream small deltas and feel smooth. We intercept
+  // wheel input and animate window scroll toward an accumulated target with an
+  // exponential ease, so every peripheral scrolls smoothly. Keyboard, scrollbar
+  // drag and touch stay native (no wheel event); anchor links keep CSS
+  // scroll-behavior:smooth because our per-frame writes use behavior:'instant'.
+  function startSmoothScroll() {
+    if (reduceMotion) return;
+    const RATE = 12;         // ease rate (1/s): higher = snappier, lower = longer glide
+    const LINE = 40;         // px per wheel "line" (deltaMode 1)
+    const doc = document.documentElement;
+    const maxY = () => doc.scrollHeight - window.innerHeight;
+    let target = window.scrollY;
+    let current = window.scrollY;
+    let running = false;
+    let last = 0;
+
+    const step = (ts) => {
+      if (!running) return;
+      const dt = last ? Math.min(0.05, (ts - last) / 1000) : 0.016;
+      last = ts;
+      const diff = target - current;
+      if (Math.abs(diff) < 0.5) {
+        current = target;
+        window.scrollTo({ top: current, behavior: 'instant' });
+        running = false; last = 0;
+        return;
+      }
+      current += diff * (1 - Math.exp(-dt * RATE));
+      window.scrollTo({ top: current, behavior: 'instant' });
+      requestAnimationFrame(step);
+    };
+
+    // Walk up from the wheel target: if an ancestor (or a textarea) can still
+    // scroll in the wheel's direction, let the browser handle it natively and
+    // don't hijack the page.
+    const innerScrollable = (el, dir) => {
+      while (el && el !== doc && el !== document.body) {
+        // Cheap overflow test first; only resolve styles for elements that
+        // actually overflow, so the common (non-scrolling) ancestor chain
+        // costs no getComputedStyle on this per-wheel hot path.
+        if (el.scrollHeight > el.clientHeight + 1) {
+          const canScroll = el.tagName === 'TEXTAREA' ||
+            /(auto|scroll)/.test(getComputedStyle(el).overflowY);
+          if (canScroll) {
+            const atTop = el.scrollTop <= 0;
+            const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+            if (!((dir < 0 && atTop) || (dir > 0 && atBottom))) return true;
+          }
+        }
+        el = el.parentElement;
+      }
+      return false;
+    };
+
+    window.addEventListener('wheel', (e) => {
+      if (e.ctrlKey) return;                                   // pinch-zoom
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;     // horizontal intent
+      if (!e.deltaY) return;
+      if (innerScrollable(e.target, e.deltaY)) return;         // let inner areas scroll
+      e.preventDefault();
+      if (!running) { current = target = window.scrollY; }     // re-seed from live position
+      let d = e.deltaY;
+      if (e.deltaMode === 1) d *= LINE;                        // lines → px
+      else if (e.deltaMode === 2) d *= window.innerHeight;     // pages → px
+      target = Math.max(0, Math.min(maxY(), target + d));
+      if (!running) { running = true; requestAnimationFrame(step); }
+    }, { passive: false });
+
+    // When scroll moves by any non-wheel means while we're idle (scrollbar,
+    // keyboard, anchor click), resync so the next wheel starts from there.
+    window.addEventListener('scroll', () => {
+      if (!running) { current = target = window.scrollY; }
+    }, { passive: true });
+
+    // Anchor click → release control so CSS scroll-behavior:smooth runs cleanly.
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest && e.target.closest('a[href^="#"]');
+      if (a) { running = false; last = 0; }
+    });
+  }
+
   // ---- init ----
   updateYears();
   document.addEventListener('scroll', updateHeader, true);
@@ -413,4 +500,5 @@
   startStarfields();
   startTimeline();
   startFaq();
+  startSmoothScroll();
 })();

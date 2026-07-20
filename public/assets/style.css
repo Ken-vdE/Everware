@@ -1,5 +1,29 @@
+/* ==== self-hosted fonts (was render-blocking Google Fonts) ====
+   woff2 in assets/fonts/, generated from Google's css2 output (latin + latin-ext,
+   font-display:swap). 'Space Grotesk Fallback' is Arial with metric overrides
+   (Fontaine method: size-adjust from xAvgCharWidth ratio, ascent/descent scaled)
+   so the swap to Space Grotesk doesn't reflow the big hero H1 → no CLS. */
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/jetbrains-mono-400-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/jetbrains-mono-400-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/jetbrains-mono-500-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/jetbrains-mono-500-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/jetbrains-mono-700-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/jetbrains-mono-700-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/space-grotesk-400-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/space-grotesk-400-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/space-grotesk-500-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/space-grotesk-500-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:600;font-display:swap;src:url('fonts/space-grotesk-600-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:600;font-display:swap;src:url('fonts/space-grotesk-600-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/space-grotesk-700-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/space-grotesk-700-latin.woff2') format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+/* Multiple local() names so at least one resolves everywhere (Lighthouse's
+   Linux runner has no Arial → the face was inert → CLS stayed high). Arimo and
+   Liberation Sans are metric-identical Arial clones, so the overrides below
+   (calibrated to Arial metrics) stay correct whichever one wins. */
+@font-face{font-family:'Space Grotesk Fallback';src:local('Arial'),local('Arimo'),local('Liberation Sans'),local('Helvetica Neue'),local('Roboto');size-adjust:126.641%;ascent-override:77.7%;descent-override:23.057%;line-gap-override:0.0%}
 html{scroll-behavior:smooth;scroll-padding-top:78px}
-body{margin:0;background:#050505;font-family:'Space Grotesk',system-ui,sans-serif}
+body{margin:0;background:#050505;font-family:'Space Grotesk','Space Grotesk Fallback',system-ui,sans-serif}
 a{color:inherit}
 
 @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
@@ -11,6 +35,49 @@ a{color:inherit}
 .ew-input:focus{border-color:var(--accent,#3B82F6) !important;background:rgba(255,255,255,.05) !important}
 .ew-langbtn{cursor:pointer;transition:color .2s ease,opacity .2s ease}
 .ew-navlink{text-decoration:none;transition:color .25s ease,opacity .25s ease;color:inherit;opacity:.62}
+
+/* ---- extracted from repeated inline style= attributes ----
+   These lived inline in the (no-cache) HTML and repeated many times; moved here
+   they de-duplicate and ride the immutable style.css cache. Existing :hover/
+   :focus and the responsive !important overrides below still win over them. */
+.ew-ftlink{text-decoration:none;color:rgba(255,255,255,.75)}
+.ew-ixlink{text-decoration:none;border-top:1px solid rgba(255,255,255,.14);padding:13px 0;display:flex;gap:14px;color:rgba(255,255,255,.7)}
+.ew-card{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.02);border-radius:16px;padding:36px}
+.ew-pad{position:relative;max-width:1240px;margin:0 auto;box-sizing:border-box;padding:118px 48px}
+.ew-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.16);border-radius:10px;padding:14px 16px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:15px;outline:none}
+.ew-b{display:block}
+.ew-accent{color:var(--accent,#3B82F6)}
+.ew-caplabel{font-size:15px;font-weight:500;font-family:'Space Grotesk',sans-serif}
+.ew-caprow{border-top:1px solid rgba(0,0,0,.16);padding:20px 0;display:flex;justify-content:space-between;gap:24px}
+.ew-capval{font-size:12.5px;color:rgba(0,0,0,.5);text-align:right}
+.ew-svc-num{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--accent,#3B82F6);margin-bottom:22px}
+.ew-svc-h3{margin:0 0 12px;font-size:26px;font-weight:600;letter-spacing:-.02em}
+.ew-svc-p{margin:0 0 22px;font-size:16px;line-height:1.55;color:rgba(255,255,255,.6)}
+.ew-eyebrow-d{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;color:rgba(255,255,255,.45);text-transform:uppercase}
+.ew-why-a{display:grid;grid-template-columns:18px 1fr;gap:12px;font-size:15.5px;line-height:1.45;color:var(--wa-tx,rgba(255,255,255,.55))}
+.ew-why-b{display:grid;grid-template-columns:18px 1fr;gap:12px;font-size:15.5px;line-height:1.45;color:var(--wb-tx,rgba(255,255,255,.85))}
+.ew-why-mk-a{color:var(--wa-mk,rgba(255,255,255,.3))}
+.ew-why-mk-b{color:var(--wb-mk,var(--accent,#3B82F6))}
+.ew-stat-label{display:block;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:9px}
+.ew-sec-light{position:relative;overflow:hidden;background:#f6f5f2;color:#0a0a0a}
+.ew-sec-dark{position:relative;background:#050505;color:#fff;overflow:hidden}
+.ew-eyebrow-l{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:rgba(0,0,0,.45);margin-bottom:26px}
+.ew-eyebrow-hero{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:26px}
+.ew-pill{border:1px solid rgba(0,0,0,.18);padding:9px 15px;border-radius:999px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:rgba(0,0,0,.6)}
+.ew-mono{font-family:'JetBrains Mono',monospace}
+.ew-inforow{border-top:1px solid rgba(255,255,255,.14);padding:20px 0;display:flex;justify-content:space-between;gap:24px}
+.ew-inforow-val{font-size:12.5px;color:rgba(255,255,255,.5);text-align:right}
+.ew-inforow-vallink{font-size:12.5px;color:rgba(255,255,255,.5);text-align:right;text-decoration:none}
+.ew-bracket{color:color-mix(in srgb,var(--accent,#3B82F6) 55%,transparent);font-weight:400}
+.ew-sec-lead{max-width:460px;margin:24px 0 0;font-size:18px;line-height:1.55;color:rgba(255,255,255,.62)}
+.ew-col16{display:flex;flex-direction:column;gap:16px}
+.ew-col11{display:flex;flex-direction:column;gap:11px;font-size:13.5px}
+.ew-accent-link{color:var(--accent,#3B82F6);text-decoration:none}
+.ew-kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:16px}
+.ew-sec-h2{margin:0;font-weight:700;font-size:60px;line-height:.98;letter-spacing:-.03em}
+.ew-sec-h2-mb{margin:0 0 60px;max-width:760px}
+.ew-grid2w{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+.ew-status-item{display:inline-flex;align-items:center;gap:22px}
 
 /* ---- Hero galaxy (Spline) ---- */
 /* Layout/fade for the viewer; only becomes visible once main.js activates it

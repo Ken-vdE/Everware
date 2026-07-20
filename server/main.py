@@ -12,6 +12,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, EmailStr, Field
+from starlette.middleware.gzip import GZipMiddleware
 
 from server.render import render_pages
 
@@ -31,6 +32,11 @@ if not any(isinstance(h, RotatingFileHandler) for h in logger.handlers):
     logger.addHandler(_file_handler)
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+
+# Compress text responses (HTML/CSS/JS/JSON). Cloud Run does no compression at
+# the platform for domain-mapped services, so it must happen here. See README
+# "Compression" for why a CDN would take this over at higher scale.
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 
 @app.middleware("http")
@@ -124,7 +130,22 @@ async def contact(msg: ContactIn, request: Request):
     return {"ok": True}
 
 
+class CachedStatic(StaticFiles):
+    """StaticFiles with explicit Cache-Control. Fonts have stable filenames and
+    CSS/JS are requested with a ?v=<content-hash> (see render.py), so both are
+    safe to cache for a year immutable. HTML is revalidated every load so a new
+    deploy's ?v refs are picked up immediately."""
+
+    async def get_response(self, path, scope):
+        resp = await super().get_response(path, scope)
+        if path.lower().endswith((".woff2", ".css", ".js")):
+            resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        else:
+            resp.headers["Cache-Control"] = "no-cache"
+        return resp
+
+
 # Render the static pages once at startup (fails loud on a missing key),
 # then mount last: everything not matched above is served from public/.
 render_pages()
-app.mount("/", StaticFiles(directory=PUBLIC, html=True), name="site")
+app.mount("/", CachedStatic(directory=PUBLIC, html=True), name="site")
