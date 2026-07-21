@@ -168,8 +168,9 @@ resource "google_monitoring_alert_policy" "max_instances" {
     display_name = "active instances at ceiling (${var.max_instances}) for 5m"
     condition_threshold {
       filter          = "${local.run_filter} AND metric.type = \"run.googleapis.com/container/instance_count\" AND metric.labels.state = \"active\""
-      comparison      = "COMPARISON_GTE"
-      threshold_value = var.max_instances
+      # Monitoring API only supports GT/LT — express ">= max" as "> max-1".
+      comparison      = "COMPARISON_GT"
+      threshold_value = var.max_instances - 1
       duration        = "300s"
       aggregations {
         alignment_period     = "60s"

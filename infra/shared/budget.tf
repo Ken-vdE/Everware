@@ -23,6 +23,7 @@ resource "google_billing_budget" "monthly" {
   count           = local.budget_enabled
   billing_account = var.billing_account
   display_name    = "everware monthly budget"
+  depends_on      = [google_project_service.enabled]
 
   budget_filter {
     projects = ["projects/${data.google_project.this.number}"]

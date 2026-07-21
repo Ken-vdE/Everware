@@ -11,6 +11,10 @@ terraform {
 provider "google" {
   project = var.project_id
   region  = var.region
+
+  # Send X-Goog-User-Project on every call so quota-metered APIs work under user ADC.
+  billing_project       = var.project_id
+  user_project_override = true
 }
 
 variable "project_id" { type = string }
