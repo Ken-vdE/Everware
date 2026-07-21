@@ -18,3 +18,8 @@ variable "region" {
   type    = string
   default = "europe-west4"
 }
+variable "alert_email" {
+  type        = string
+  default     = ""
+  description = "Email for runtime alerts. Set in terraform.tfvars (gitignored). Empty = runtime alerts off."
+}

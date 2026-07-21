@@ -1,0 +1,17 @@
+# Single source of truth for ALL three Terraform root modules (shared, staging, prod).
+# Copy to infra/terraform.tfvars (gitignored); each root dir symlinks to it.
+#   cp infra/terraform.tfvars.example infra/terraform.tfvars   # then edit
+#
+# If the per-dir symlinks are missing (e.g. fresh clone on a new machine), recreate:
+#   ln -s ../terraform.tfvars    infra/shared/terraform.tfvars
+#   ln -s ../../terraform.tfvars infra/environments/staging/terraform.tfvars
+#   ln -s ../../terraform.tfvars infra/environments/prod/terraform.tfvars
+
+project_id      = "your-gcp-project-id"
+billing_account = "XXXXXX-XXXXXX-XXXXXX" # shared only; staging/prod log a harmless "undeclared variable" warning. Use "" to skip the budget.
+alert_email     = "you@example.com"      # runtime alerts + budget notifications; "" disables runtime alerts
+
+# Optional — defaults shown:
+# region          = "europe-west4"   # all dirs
+# monthly_budget  = 10               # shared only
+# budget_currency = "EUR"            # shared only

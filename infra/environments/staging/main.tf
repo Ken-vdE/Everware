@@ -12,6 +12,8 @@ module "app" {
   domains                = ["staging.everware.nl"]
   min_instances          = 0
   max_instances          = 2
+  alert_email            = var.alert_email
+  uptime_host            = "staging.everware.nl"
 }
 
 output "service_uri" {
