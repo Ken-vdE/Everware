@@ -2,20 +2,50 @@
 
 > Everware is a Dutch custom software agency building bespoke software, AI solutions and autonomous agents — with personal attention, built for stability and maintainability. Site: https://everware.nl (Dutch, canonical) and https://everware.nl/en/ (English).
 
-Everware works for organizations that hit the limits of off-the-shelf software. One small team covers the full stack — from process analysis to years of maintenance — and starts from the client's process, not from a ready-made product. Clients own the code and the data.
+Everware works for organizations that hit the limits of off-the-shelf software. One small team covers the full stack — from process analysis to years of maintenance — and starts from the client's process, not from a ready-made product. Clients own the code and the data. Working since 2014.
 
 ## Services
 
-- Process optimization: mapping processes and removing noise before building anything.
-- Design & architecture: foundations designed for stability and growth (system design, roadmap, UX).
-- Custom software: applications, platforms and internal tools built around the client's processes (web, native, mobile, integrations).
-- AI solutions: production-grade custom AI — LLM applications, RAG, custom models.
-- Autonomous agents: reliable, controllable agents with a human at the helm (workflows, tool-use, orchestration).
-- Advisory: independent second opinions, strategy and guidance.
+- Process optimization: mapping processes and stripping out the noise before building anything (analysis, workflows, automation).
+- Design & architecture: a foundation designed to grow with the client — considered, built for stability, not for haste (system design, roadmap, UX).
+- Custom software: applications, platforms and internal tools built fully around the client's processes (native, web & mobile, internal tools, integrations).
+- AI solutions: custom AI that fits the client's data and processes — no demos, but something that reaches production (LLM applications, RAG, custom models).
+- Autonomous agents: agents that take work off your hands — reliable, controllable, with a human at the helm (workflows, tool-use, orchestration).
+- Advisory: independent, objective thinking on the right choices (second opinion, strategy, guidance).
+
+## Capabilities
+
+One team that masters the full stack — from foundation to autonomous agent — and stays with the client. No standard packages, no compromises. Built for stability, maintainability and reliability.
+
+- Backend: Python · PHP · Node · Java or Kotlin · Go · C++ · Rust
+- Frontend: React or Next · Vue or Nuxt · PWA · Web Components · WASM · React Native or Expo · iOS · Android
+- AI & ML: LLMs · RAG · Generative AI · fine-tuning · custom models
+- Agents: workflows · tool-use · orchestration
+- Cloud & infra: Fly.io · Render · Railway · Vercel · Vultr · DigitalOcean · GCP · AWS · CI/CD
+- Data: pipelines · integrations · dashboards · MySQL · PostgreSQL · Supabase
+
+## Why Everware
+
+Off-the-shelf software forces your process; Everware improves your process. Most tools are built for the average customer — nothing about a given client is average. Everware starts from the client's process and builds around it. Compared to off-the-shelf software:
+
+- Software adapts to the client's process — and actively improves it (vs. bending the process to fit the software).
+- Only what the client needs, nothing more (vs. paying for features never used).
+- One fixed team that knows the client by name (vs. a helpdesk that doesn't know them).
+- The client owns the code and the data (vs. vendor lock-in and hidden limits).
+- Transparent — the client follows along continuously (vs. a black box).
 
 ## How we work
 
-Introduction call → brainstorm → on-site process inventory → design & architecture → build (test-driven, AI-driven, short visible iterations) → maintenance & evolution.
+Introduction call → brainstorm → on-site process inventory ("over coffee") → design & architecture → build (test-driven, AI-driven, short visible iterations) → maintenance & evolution. Approach: personal, involved, accelerated Agile.
+
+## FAQ
+
+- What does Everware do? Builds custom software, AI solutions and autonomous agents — from optimizing processes to designing, building and maintaining the software around them, all under one roof.
+- Fixed packages? No and yes. Everything is built to measure around the client's processes, starting from the problem rather than a ready-made product; can connect to existing software when desired.
+- Who is it for? Organizations that hit the limits of standard software and need something that truly fits the way they work.
+- Which technologies? The full stack — from Python, PHP, Node, Java, Go, C++ and Rust to Vue, React and React Native, with LLMs, RAG and a choice of any AI model. Chosen to fit the client's situation.
+- Involvement after delivery? Yes — maintenance and further development are part of it, so the software stays reliable and grows with the client.
+- What does a project cost? Depends on what is built; after a no-obligation introductory call, Everware gives a clear picture of scope and investment.
 
 ## Facts
 
@@ -23,9 +53,10 @@ Introduction call → brainstorm → on-site process inventory → design & arch
 - Email: hallo@everware.nl
 - Phone: 073 208 9198
 - Service area: Netherlands (remote-first, on-site when useful)
+- Experience: working since 2014
 - Languages: Dutch (primary), English
 
 ## Pages
 
-- [Home (Dutch)](https://everware.nl/): services, process, about, FAQ, contact
+- [Home (Dutch)](https://everware.nl/): capabilities, services, process, about, why, FAQ, contact
 - [Home (English)](https://everware.nl/en/): full English translation of the same page
