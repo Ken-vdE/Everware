@@ -12,7 +12,7 @@ cd "$(dirname "$0")/environments/staging"
 
 case "${1:-}" in
   init)
-    terraform init -reconfigure -input=false
+    terraform init -reconfigure -backend-config=backend.hcl -input=false
     ;;
   secret)
     terraform apply -auto-approve -input=false \
