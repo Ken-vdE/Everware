@@ -1,0 +1,12 @@
+# GCS backend bucket for Terraform state — passed to `terraform init` via
+# -backend-config=backend.hcl. Terraform evaluates the backend block BEFORE
+# variables, so this cannot come from terraform.tfvars; it needs its own file.
+# Copy to infra/backend.hcl (gitignored); it's symlinked into all 3 root dirs.
+#   cp infra/backend.hcl.example infra/backend.hcl   # then edit
+#
+# If the per-dir symlinks are missing (fresh clone), recreate:
+#   ln -s ../backend.hcl    infra/shared/backend.hcl
+#   ln -s ../../backend.hcl infra/environments/staging/backend.hcl
+#   ln -s ../../backend.hcl infra/environments/prod/backend.hcl
+
+bucket = "your-gcp-project-id-tfstate"

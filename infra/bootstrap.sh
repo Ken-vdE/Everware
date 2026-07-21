@@ -13,9 +13,13 @@ gcloud storage buckets create "gs://${BUCKET}" \
   --uniform-bucket-level-access
 gcloud storage buckets update "gs://${BUCKET}" --versioning
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+printf 'bucket = "%s"\n' "$BUCKET" > "${SCRIPT_DIR}/backend.hcl"
+
 echo
 echo "State bucket ready: gs://${BUCKET}"
-echo "Init each config with: terraform init -backend-config=\"bucket=${BUCKET}\""
+echo "Wrote ${SCRIPT_DIR}/backend.hcl (gitignored; symlinked into all 3 root dirs)."
+echo "Init each config with: terraform init -backend-config=backend.hcl"
 echo
 echo "Per environment, terraform creates two empty Secret Manager containers that"
 echo "must be seeded before the full apply (values are never committed to git):"

@@ -145,25 +145,36 @@ gcloud auth application-default login
 # 2. Create the Terraform state bucket
 ./infra/bootstrap.sh <PROJECT_ID>          # bucket: <PROJECT_ID>-tfstate
 
-# 3. Apply shared infra (APIs, Artifact Registry, WIF, deploy SA, AR reader for the run agent)
+# 3. Configure Terraform ONCE — a single terraform.tfvars and a single
+#    backend.hcl are each symlinked into all three root modules (shared,
+#    staging, prod), so no -var flags and no per-dir copies:
+cp infra/terraform.tfvars.example infra/terraform.tfvars   # then edit: project_id + billing_account
+cp infra/backend.hcl.example      infra/backend.hcl        # then edit: bucket = <PROJECT_ID>-tfstate
+#    Then apply shared infra (APIs incl. monitoring, Artifact Registry, WIF,
+#    deploy SA, AR reader, and the project billing budget). The budget needs
+#    billing perms — run this as a user with roles/billing.costsManager on the
+#    billing account, NOT the deploy SA:
 cd infra/shared
-terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
-terraform apply -var="project_id=<PROJECT_ID>"
+terraform init -backend-config=backend.hcl
+terraform apply
 
 # 4. Set these as GitHub repo Actions *Variables*:
 #    GCP_PROJECT_ID = <PROJECT_ID>
 #    WIF_PROVIDER   = $(terraform output -raw wif_provider)
 #    DEPLOY_SA      = $(terraform output -raw deploy_service_account)
+#    And these as repo Actions *Secrets* for deploy notifications (optional):
+#    TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID    (see "Monitoring & alerting")
 
 # 5. Verify domain ownership BEFORE applying the environments (domain mappings
 #    require a verified domain). Verify everware.nl, www.everware.nl,
 #    staging.everware.nl in Google Search Console for the deploying account.
 
-# 6. For EACH environment (staging first, then prod): set project_id in its
-#    terraform.tfvars, then create the two secret containers, seed both, then apply.
-#    Secret values (Resend key, CONTACT_FROM sender) are never committed to git.
+# 6. For EACH environment (staging first, then prod): create the two secret
+#    containers, seed both, then apply. project_id already comes from the shared
+#    infra/terraform.tfvars via the symlink — no -var needed. Secret values
+#    (Resend key, CONTACT_FROM sender) are never committed to git.
 cd ../environments/staging
-terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform init -backend-config=backend.hcl
 terraform apply \
   -target=module.app.google_secret_manager_secret.resend \
   -target=module.app.google_secret_manager_secret.contact_from    # empty containers only
@@ -172,7 +183,7 @@ printf '%s' "onboarding@resend.dev"   | gcloud secrets versions add contact-from
 terraform apply    # full: service (secrets now resolve) + domain mapping (domain verified)
 
 cd ../prod
-terraform init -backend-config="bucket=<PROJECT_ID>-tfstate"
+terraform init -backend-config=backend.hcl
 terraform apply \
   -target=module.app.google_secret_manager_secret.resend \
   -target=module.app.google_secret_manager_secret.contact_from
@@ -195,6 +206,45 @@ git push origin main       # → prod
 
 Images are tagged by commit SHA in Artifact Registry. Terraform ignores the running
 image, so `terraform apply` never reverts a CI deploy.
+
+### Monitoring & alerting
+
+Two independent layers, so a broken deploy or a degraded site surfaces without
+anyone watching a dashboard.
+
+**Deploy notifications (GitHub Actions → Telegram).** `.github/workflows/deploy.yml`
+pings Telegram when a deploy starts and when it succeeds/fails, with a link to the
+run. Needs two repo Actions secrets: `TELEGRAM_BOT_TOKEN` (from @BotFather) and
+`TELEGRAM_CHAT_ID` (DM @userinfobot for your id). If the secrets are absent the
+curl no-ops — the deploy still runs.
+
+**Runtime alerts (Cloud Monitoring, per service).** Defined in Terraform
+(`infra/modules/app/monitoring.tf`) so both environments get them. They email the
+`alert_email` variable — set once in `infra/terraform.tfvars` (gitignored, so the
+address is never committed); empty disables runtime alerts. Use an address that
+actually routes (a plus-alias is fine) or alerts vanish silently.
+
+- **Uptime** — HTTPS `/` every 15m (GCP's max interval), SSL validated; fires if
+  >1 probe region fails. Also catches cert expiry.
+- **5xx** rate, **4xx** rate (high threshold — dodges bot/404 noise), **p95
+  latency**, **CPU**, **memory**, **max-instances reached** (saturation), and
+  **slow container startup**.
+- **Log-based:** **contact-form failure** (a lost lead — matches the app's
+  "lost submission" / missing-key log lines) and **unhandled exceptions**. Cloud
+  Run tags all stderr as ERROR, so these match on log *text*, not severity.
+
+Thresholds are module variables (`alert_*` in `infra/modules/app/variables.tf`);
+the probe interval is `uptime_period`, the probed host `uptime_host`.
+
+**Billing budget (project-wide).** `infra/shared/budget.tf` creates a monthly
+budget (`monthly_budget`, default €10) emailing at 50/90/100% — a runaway-cost
+guard. Skipped unless `billing_account` is set.
+
+**Cost ≈ €0.** Cloud Run system metrics are free; uptime at 15m is ~2,900
+probes/mo (free tier: 1M); with `min_instances = 0` and request-based billing the
+probes add no standing charge. Only alerting-policy time-series volume could ever
+bill, and it's cents at most — check Billing → Reports (service: Cloud Monitoring)
+after month one.
 
 ### Networking (no VPC)
 

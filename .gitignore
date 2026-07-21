@@ -13,5 +13,8 @@ public/assets/*.min.js
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+/infra/terraform.tfvars
+/infra/backend.hcl
+*.auto.tfvars
 crash.log
 *.tfplan
