@@ -4,6 +4,7 @@ import logging
 import os
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
+from urllib.parse import urlparse
 
 import httpx
 from fastapi import FastAPI, HTTPException, Request
@@ -18,6 +19,12 @@ from server.render import render_pages
 
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
 RESEND_URL = "https://api.resend.com/emails"
+
+# The site's own canonical host (derived from SITE_URL). Only "www.<this>" is
+# ever redirected to the apex; any other Host header is served as-is and never
+# reflected back into a Location, so the redirect can't be turned into an
+# open-redirect primitive from the public *.run.app endpoint.
+CANONICAL_HOST = urlparse(os.getenv("SITE_URL", "https://everware.nl")).hostname or "everware.nl"
 
 LOG_DIR = Path(os.getenv("LOG_DIR", Path(__file__).resolve().parent.parent / "logs"))
 LOG_DIR.mkdir(parents=True, exist_ok=True)
@@ -41,10 +48,12 @@ app.add_middleware(GZipMiddleware, minimum_size=500)
 
 @app.middleware("http")
 async def redirect_www_to_apex(request: Request, call_next):
-    """301 www.<domain> → apex, so there is one canonical host."""
-    host = request.headers.get("host", "")
-    if host.startswith("www."):
-        target = f"https://{host[4:]}{request.url.path}"
+    """301 www.<canonical host> → apex, so there is one canonical host. Only the
+    site's own www host is redirected; the target is built from the trusted
+    CANONICAL_HOST constant, never from the raw Host header."""
+    host = request.headers.get("host", "").split(":", 1)[0].lower()
+    if host == f"www.{CANONICAL_HOST}":
+        target = f"https://{CANONICAL_HOST}{request.url.path}"
         if request.url.query:
             target += f"?{request.url.query}"
         return RedirectResponse(target, status_code=301)
@@ -127,14 +136,14 @@ async def contact(msg: ContactIn, request: Request):
     except httpx.HTTPError:
         logger.exception(
             "Resend request failed; lost submission: name=%r email=%s company=%r message=%r",
-            msg.name, msg.email, msg.company, msg.message,
+            msg.name, msg.email, msg.company, msg.message[:500],
         )
         raise HTTPException(status_code=503, detail="Email delivery failed")
 
     if r.is_error:
         logger.error(
             "Resend returned %s: %s; lost submission: name=%r email=%s company=%r message=%r",
-            r.status_code, r.text, msg.name, msg.email, msg.company, msg.message,
+            r.status_code, r.text, msg.name, msg.email, msg.company, msg.message[:500],
         )
         raise HTTPException(status_code=503, detail="Email delivery failed")
 

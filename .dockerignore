@@ -8,6 +8,7 @@ logs
 tests
 docs
 scripts
+infra
 .env
 .env.example
 public/index.html
