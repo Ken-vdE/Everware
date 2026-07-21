@@ -207,6 +207,46 @@ git push origin main       # → prod
 Images are tagged by commit SHA in Artifact Registry. Terraform ignores the running
 image, so `terraform apply` never reverts a CI deploy.
 
+### Running Terraform (and a future upgrade path)
+
+Today, **infrastructure changes are applied from a developer's machine**:
+`terraform apply` runs locally under the engineer's user credentials (Application
+Default Credentials — note `user_project_override` in each `versions.tf`). The
+_state_ is already remote and shared (GCS bucket, see [Backend](#backend)), so this
+is fine for a solo/small setup and there is no state-on-laptop risk. But the
+_credentials to change prod_ live on whoever last ran `apply`, and there is no
+central record of who applied what.
+
+This is normal at small scale. The mature pattern is to let CI run Terraform so no
+human holds standing infrastructure credentials — and the good news is **this repo
+is already 90% of the way there**: app deploys (`.github/workflows/deploy.yml`)
+already authenticate to GCP keyless via **Workload Identity Federation** (`WIF_PROVIDER`
++ the deploy service account), with no service-account JSON key anywhere. The same
+mechanism can run Terraform.
+
+**The upgrade, when it's worth it:**
+
+1. **Plan on PRs, apply on merge.** Add a `terraform` GitHub Actions workflow that
+   runs `terraform plan` on pull requests (posting the plan as a PR comment) and
+   `terraform apply` only after merge to `staging` / `main`, gated on a required
+   review or a GitHub **Environment** protection rule. Human approval stays in the
+   loop; execution moves off laptops.
+2. **Reuse the existing WIF trust.** The workflow authenticates with
+   `google-github-actions/auth@v2` exactly like `deploy.yml` — grant the WIF
+   principal (or a dedicated `terraform` service account) the roles Terraform needs
+   (`roles/editor` or a tighter custom role, plus billing for the budget). No new
+   key files.
+3. **Then nobody needs local prod creds.** A compromised laptop leaks nothing;
+   every change is a reviewable, logged CI run. Engineers can still `terraform plan`
+   locally for fast iteration.
+
+The trade-off is setup effort and slower feedback (a change ships through CI, not an
+instant local `apply`), which is why it's deliberately deferred until infra changes
+often enough — or the team grows enough — to justify it. Managed options
+(Terraform Cloud, Spacelift, Atlantis) do the same thing as a SaaS if building the
+workflow isn't worth it, but plain GitHub Actions + the WIF trust already in place is
+free and the natural next step here.
+
 ### Monitoring & alerting
 
 Two independent layers, so a broken deploy or a degraded site surfaces without
