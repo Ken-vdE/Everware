@@ -14,7 +14,9 @@ module "app" {
   min_instances          = 0
   max_instances          = 4
   alert_email            = var.alert_email
-  uptime_host            = "everware.nl"
+  # uptime_host disabled for now — empty host turns off the HTTPS uptime check
+  # and its alert policy while keeping all other metric/log alerts active.
+  # uptime_host            = "everware.nl"
 }
 
 output "service_uri" {
