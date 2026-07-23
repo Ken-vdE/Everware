@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0}
+  /* LinkedIn company-page cover: 1128x191. Same visual language as
+     scripts/og-image.html, re-laid horizontal for the thin strip. */
+  body{width:1128px;height:191px;overflow:hidden;background:#050505;color:#fff;font-family:'Space Grotesk',sans-serif;position:relative}
+  .dots{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:24px 24px}
+  .glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:820px;height:300px;background:radial-gradient(ellipse at center,rgba(59,130,246,.32),transparent 70%);filter:blur(30px)}
+  /* LinkedIn overlays the round company avatar at the lower-LEFT of the cover
+     (~22% width). Everything is stacked into one compact column and centered, so
+     the block's left edge lands ~30% in — clear of the avatar at any height. */
+  .wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 72px;box-sizing:border-box}
+  .brand{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:14px;letter-spacing:.28em;color:rgba(255,255,255,.45);text-transform:uppercase}
+  h1{margin:0;font-weight:700;font-size:64px;line-height:.95;letter-spacing:-.035em;text-shadow:0 0 30px rgba(255,255,255,.22)}
+  h1 .b{color:rgba(59,130,246,.55);font-weight:500}
+  h1 .a{color:#3B82F6;text-shadow:0 0 24px #3B82F699}
+  .cursor{display:inline-block;width:16px;height:44px;background:#3B82F6;box-shadow:0 0 22px rgba(59,130,246,.7);vertical-align:baseline;transform:translateY(4px);margin-left:10px}
+  .tag{margin-top:6px;font-family:'JetBrains Mono',monospace;font-size:19px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.6);white-space:nowrap}
+  .tag span{color:#3B82F6}
+</style>
+</head>
+<body>
+<div class="dots"></div>
+<div class="glow"></div>
+<div class="wrap">
+  <div class="brand">
+    <div class="eyebrow">~/software op maat</div>
+    <h1>Everware <span class="b">[</span><span class="a">AI</span><span class="b">]</span><span class="cursor"></span></h1>
+    <div class="tag">Software <span>·</span> AI <span>·</span> Agents</div>
+  </div>
+</div>
+</body>
+</html>
